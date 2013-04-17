@@ -96,12 +96,7 @@ EnemyType EnemyUnit[] = {
 //								[CCCallFuncN actionWithTarget:self selector:@selector(removeBullet:)],
 								nil];
 	[bullet runAction:action];
-//    CCPoint pos = this->getPosition();
-//    Bullet *bullet = new Bullet(m_bulletSpeed, "W2.png", m_attackMode);
-//    bullet->autorelease();
-//    enemy_bullet->addObject(bullet);
-//    getParent()->addChild(bullet, m_zOrder, 900);
-//    bullet->setPosition(ccp(pos.x, pos.y - getContentSize().height * 0.2));
+
 }
 -(void)hurt
 {
@@ -116,6 +111,7 @@ EnemyType EnemyUnit[] = {
     // 敌机爆炸，从敌机数组删除
 //    enemy_items->removeObject(this);
     [self removeFromParentAndCleanup:YES];
+//        [enemy_items removeObject:self];
 
 }
 @end

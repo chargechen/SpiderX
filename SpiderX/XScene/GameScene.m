@@ -197,7 +197,6 @@
 
 -(void) initPlayer{
     player =[Xplayer createIn:self];
-    [player setPosition:CGPointMake(screenSize.width/2,0)];
     CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
     CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
     [player runAction:[CCSequence actions:bl, call,nil]];
@@ -439,43 +438,17 @@
 
 -(void)checkIsCollide
 {
-    NSMutableArray *eneArray = enemy_items;
-    for(SpiderEnemy* enemy in eneArray)
+    for(SpiderEnemy* enemy in enemy_items)
     {
         if([self collide:enemy and:player]){
             if (player) {
                 [enemy destroy];
+                [enemy_items removeObject:enemy];
                 [player hurt];
+                break;
             }
         }
     }
-//    CCARRAY_FOREACH(enemy_items, units)
-//    {
-//        UnitSprite *enemy = dynamic_cast<UnitSprite*>(units);
-//        CCARRAY_FOREACH(play_bullet, bullets)
-//        {
-//            UnitSprite *bullet = dynamic_cast<UnitSprite*>(bullets);
-//            if (this->collide(enemy, bullet)) {
-//                enemy->hurt();
-//                bullet->hurt();
-//            }
-//            if (!(m_screenRec.intersectsRect(bullet->boundingBox()))) {
-//                bullet->destroy();
-//            }
-//        }
-//        if (collide(enemy, m_ship)) {
-//            if (m_ship->isActive()) {
-//                enemy->hurt();
-//                m_ship->hurt();
-//            }
-//            
-//        }
-//        if (!(m_screenRec.intersectsRect(enemy->boundingBox()))) {
-//            enemy->destroy();
-//        }
-//    }
-
-
 }
 
 #pragma -
@@ -692,7 +665,8 @@
     [self addChild:enemy z:enemy.zOrder tag:1000];
     [enemy runAction:tempAction];
     [enemy_items addObject:enemy];
-//    enemy_items->addObject(enemy);
+    NSLog(@"-----ADD_ENEMY------:%@",enemy);
+    NSLog(@"-----ADD_ENEMY_ITEMS------:%@",enemy_items);
 }
 
 -(void)repeatAction:(CCNode *)pSender

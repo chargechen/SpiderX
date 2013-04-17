@@ -13,7 +13,6 @@
     CCMotionStreak *playerStreak;
 }
 -(void)setPosition:(CGPoint)position;
--(CGPoint)getPosition;
 +(id)createIn:(CCNode*)parent;
 -(id)initPlayer:(CCNode*)parent;
 @end
