@@ -10,19 +10,20 @@
 #import "cocos2d.h"
 #import "SCListener.h"
 #import "Xplayer.h"
+
 @interface GameScene : CCLayer {
     Xplayer *player;
-//    CCMotionStreak *playerStreak;
+    
     CGPoint playerVelocity;
     
-    CCArray* spiders;
-    float spiderMoveDuration;
-    int numSpidersMoved;
+    CCArray* rocks;
+    float rockMoveDuration;
+    int numRocksMoved;
     CCLabelAtlas *scoreLable;
     CCLabelAtlas *lifeLabel;
-    ccTime totalTime;
+    ccTime _totalTime;
     int playerlife;
-    
+    int score;
     CCArray *bullets;
     float impactDistanceSquared;
     

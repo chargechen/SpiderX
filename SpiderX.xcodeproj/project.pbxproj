@@ -32,6 +32,8 @@
 		1F146835171E3BC40036F08E /* Xplayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1467FF171E3BC40036F08E /* Xplayer.m */; };
 		1F146836171E3BC40036F08E /* GameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F146802171E3BC40036F08E /* GameOverScene.m */; };
 		1F146837171E3BC40036F08E /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F146804171E3BC40036F08E /* GameScene.m */; };
+		1F14683E171EA7380036F08E /* Xbullet.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F14683D171EA7370036F08E /* Xbullet.m */; };
+		1F146841171EBE990036F08E /* XRock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F146840171EBE980036F08E /* XRock.m */; };
 		1F6E7F9616FECDE500D33752 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9516FECDE500D33752 /* QuartzCore.framework */; };
 		1F6E7F9816FECDE500D33752 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9716FECDE500D33752 /* OpenGLES.framework */; };
 		1F6E7F9A16FECDE500D33752 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9916FECDE500D33752 /* OpenAL.framework */; };
@@ -205,6 +207,10 @@
 		1F146802171E3BC40036F08E /* GameOverScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverScene.m; sourceTree = "<group>"; };
 		1F146803171E3BC40036F08E /* GameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
 		1F146804171E3BC40036F08E /* GameScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameScene.m; sourceTree = "<group>"; };
+		1F14683C171EA7360036F08E /* Xbullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Xbullet.h; sourceTree = "<group>"; };
+		1F14683D171EA7370036F08E /* Xbullet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Xbullet.m; sourceTree = "<group>"; };
+		1F14683F171EBE970036F08E /* XRock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRock.h; sourceTree = "<group>"; };
+		1F146840171EBE980036F08E /* XRock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XRock.m; sourceTree = "<group>"; };
 		1F6E7F9216FECDE500D33752 /* SpiderX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpiderX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F6E7F9516FECDE500D33752 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1F6E7F9716FECDE500D33752 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -517,6 +523,10 @@
 		1F1467FB171E3BC40036F08E /* XRole */ = {
 			isa = PBXGroup;
 			children = (
+				1F14683F171EBE970036F08E /* XRock.h */,
+				1F146840171EBE980036F08E /* XRock.m */,
+				1F14683C171EA7360036F08E /* Xbullet.h */,
+				1F14683D171EA7370036F08E /* Xbullet.m */,
 				1F1467FC171E3BC40036F08E /* SpiderEnemy.h */,
 				1F1467FD171E3BC40036F08E /* SpiderEnemy.m */,
 				1F1467FE171E3BC40036F08E /* Xplayer.h */,
@@ -1191,6 +1201,8 @@
 				1F146835171E3BC40036F08E /* Xplayer.m in Sources */,
 				1F146836171E3BC40036F08E /* GameOverScene.m in Sources */,
 				1F146837171E3BC40036F08E /* GameScene.m in Sources */,
+				1F14683E171EA7380036F08E /* Xbullet.m in Sources */,
+				1F146841171EBE990036F08E /* XRock.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -72,7 +72,6 @@
     [one setPosition:pos];
     [two setPosition:pos];
     [three setPosition:pos];
-    //这个为什么不加？加上去感觉太亮了吧
     [parent addChild:one];
     [parent addChild:two];
     [parent addChild:three];
@@ -110,7 +109,6 @@
 
 -(void)killSprite:(id)p
 {
-    // Make sure sender is actually of the right class.
     NSAssert([p isKindOfClass:[CCSprite class]], @"sender is not a CCSprite!");
     CCSprite* curSprite = (CCSprite*)p;
 

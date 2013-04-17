@@ -12,8 +12,12 @@
 #import "Effect.h"
 #import "Config.h"
 #import "SpiderEnemy.h"
+#import "Xbullet.h"
+#import "XRock.h"
+
 #define bulletCount 100
 #define marginLeft 10
+#define MAX_VOICE 1
 @interface GameScene(){
     CGSize screenSize;
 }
@@ -33,71 +37,67 @@
 {
     if(self=[super init])
     {
+        //初始化游戏数据
         screenSize = [[CCDirector sharedDirector]winSize];
         enemy_items = [[NSMutableArray alloc]init];
+        bullets = [[CCArray alloc] initWithCapacity:bulletCount];
+        _totalTime =0;
+        score =0;
+        [Config sharedConfig].scoreValue =0;
+        playerlife = 3;
         
         [Effect sharedExplosion];
         [SpiderEnemy sharedEnemy];
+        
+        //语音相关
         pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         pv_averagePower.frame = CGRectMake(2, 46, 51, 3);
         pv_averagePower.tag=2;
-        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
-//        [[[CCDirector sharedDirector] openGLView] addSubview:pv_averagePower];
+        
         pv_peakPower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         pv_peakPower.frame = CGRectMake(2, 146, 51, 103);
         pv_averagePower.tag=3;
+        
+        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
         [[CCDirector sharedDirector].view addSubview:pv_peakPower];
-//        [[[CCDirector sharedDirector] openGLView] addSubview:pv_peakPower];
         
         [[SCListener sharedListener] listen];
-                
         self.listener = [SCListener sharedListener];
         [self schedule:@selector(checkForVoiceBomb:) interval:0.1];
-        totalTime =0;
-        [Config sharedConfig].scoreValue =0;
-        playerlife = 3;
-        self.isAccelerometerEnabled = YES;
+        
+        self.isAccelerometerEnabled = YES; //允许对重力的感应
         [self initPlayer];
         self.isTouchEnabled =YES;
-        [self schedule:@selector(addEnemyToGameLayer) interval:1];
-        [self scheduleUpdate];
-        [self initSpiders];
-        [self initBackground];
-        //初始化子弹数组
-        bullets = [[CCArray alloc] initWithCapacity:bulletCount];
         
+        [self schedule:@selector(addEnemyToGameLayer) interval:1]; //每隔1秒生成1个敌人
+        [self scheduleUpdate];
+        [self initRocks];
+        [self initBackground];
+        
+        //游戏里提示的label
         CCLabelTTF *yourlife = [CCLabelTTF labelWithString:@"YOUR LIVES:" fontName:@"Marker Felt" fontSize:18];
         CCLabelTTF *yourScore = [CCLabelTTF labelWithString:@"SCORE:" fontName:@"Marker Felt" fontSize:18];
-    
         
         lifeLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",playerlife] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
         scoreLable = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
         [lifeLabel setPosition:ccp(screenSize.width-lifeLabel.contentSize.width,screenSize.height-lifeLabel.contentSize.height/2)];
-        
         [scoreLable setPosition:ccp(yourScore.contentSize.width+marginLeft,screenSize.height-scoreLable.contentSize.height/2)];
         [yourScore setPosition:ccp(yourScore.contentSize.width/2,screenSize.height-yourScore.contentSize.height/2+2)];
-        
         [yourlife setPosition:ccp(screenSize.width-yourlife.contentSize.width/2-lifeLabel.contentSize.width-marginLeft,screenSize.height-yourlife.contentSize.height/2+2)];
-        
-//        scoreLable.anchorPoint = CGPointMake(0.5f, 1.0f);
-//        lifeLabel.anchorPoint =CGPointMake(0.5f, 1.0f);
 
         [self addChild:scoreLable z:-1];
         [self addChild:lifeLabel z:40];
         [self addChild:yourlife z:40];
         [self addChild:yourScore z:40];
-//        CCMenuItem *shootMenuItem =[CCMenuItemImage itemWithNormalImage:@"ButtonPlus.png" selectedImage:@"ButtonPlusSel.png" target:self selector:@selector(startShoot)];
-//        shootMenuItem.position = CGPointZero;
-//        CCMenu *shootMenu = [CCMenu menuWithItems:shootMenuItem, nil];
-//        shootMenu.position = ccp(screenSize.width-30,screenSize.height/2);
-//        [self addChild:shootMenu z:70 tag:70];
         
-//        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"Cyber Advance.mp3" loop:YES];
+//        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"Cyber Advance.mp3" loop:YES];   //背景音乐开启后声音录入失效
     }
     return self;
 }
 
-// 无限滚动地图，采用两张图循环加载滚动
+#pragma -
+#pragma mark background
+// 采用两张图循环加载来实现地图的无限滚动
 -(void)initBackground
 {
     m_backSky =nil;
@@ -108,9 +108,9 @@
     m_backSkyHeight = m_backSky.contentSize.height;
     [self addChild:m_backSky z:-10];
     
-    if ([UIScreen instancesRespondToSelector:@selector(scale)])
+    if ([UIScreen instancesRespondToSelector:@selector(scale)])  //todo tmx文件自适应高清屏
     {
-        if ([[UIScreen mainScreen] scale]>1.0)
+        if ([[UIScreen mainScreen] scale]>1.0) 
         {
             m_backTileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"level01-hd.tmx"];
         } else
@@ -133,16 +133,15 @@
     
     [self schedule:@selector(movingBackground) interval:3];    
 }
-// 这里就是视差背景了
+// 添加点浮动的图层使背景看起来更生动
 -(void)movingBackground
 {
     [m_backSky runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-48)]];
     [m_backTileMap runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-200)]];    
-    // 每次移动48
+
     m_backSkyHeight -= 48;
-    
-    // 每次移动200
     m_backTileMapHeight -= 200;
+    
     // 图的顶部到达屏幕顶部时
     if (m_backSkyHeight <= screenSize.height) {
         if (!m_isBackSkyReload) {
@@ -152,7 +151,6 @@
             [m_backSkyRe setAnchorPoint:ccp(0,0)];
             [self addChild:m_backSkyRe z:-10];
             [m_backSkyRe setPosition:ccp(0,screenSize.height)];            
-            // 反转标志位
             m_isBackSkyReload = true;
         }
         // 第二张图紧接着第一张图滚动
@@ -166,11 +164,8 @@
         [self removeChild:m_backSky cleanup:true];        
         // 指向第二张图的精灵
         m_backSky = m_backSkyRe;
-        
-        // 第二张的精灵指针置空
         m_backSkyRe = nil;
         
-        // 反转标志位
         m_isBackSkyReload = false;
     }
     
@@ -193,8 +188,8 @@
     }
 }
 
-
-
+#pragma -
+#pragma mark player
 -(void) initPlayer{
     player =[Xplayer createIn:self];
     CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
@@ -203,7 +198,7 @@
 }
 
 #pragma -
-#pragma mark voiceDelegate
+#pragma mark 检测声音大于阈值则发起大招
 -(void) checkForVoiceBomb:(ccTime)delta
 {
     AudioQueueLevelMeterState *levels = [listener levels];
@@ -212,20 +207,19 @@
     
     Float32 average = levels[0].mAveragePower;
     
-    if (![listener isListening]) // If listener has paused or stopped…
+    if (![listener isListening])
         
-        return; // …bail.
+        return; 
     
     pv_averagePower.progress=average;
     
     pv_peakPower.progress=peak;
-    if(peak>=1){
-        for(int i =0,len=[spiders count];i<len;i++)
+    if(peak>=MAX_VOICE){
+        for(int i =0,len=[rocks count];i<len;i++)
         {
-            CCSprite *curSpider =[spiders objectAtIndex:i];
-            if ([curSpider numberOfRunningActions] == 0)
+            XRock *curRock =[rocks objectAtIndex:i];
+            if ([curRock numberOfRunningActions] == 0)
             {
-                // This spider isn't even moving so we can skip checking it.
                 continue;
             }
             CCParticleSystem *emitter_=[CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
@@ -233,106 +227,100 @@
             
             
             Effect *effect = [Effect create];
-            [effect explode:self at:curSpider.position];
+            [effect explode:self at:curRock.position];
 
-            [self removeChild:curSpider cleanup:YES];
-            [spiders removeObject:curSpider];
-            
-            CCSprite* tempSpider = [CCSprite spriteWithFile:@"balls.png"];
-            CGSize size = [tempSpider texture].contentSize;
-            tempSpider.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
-            [self addChild:tempSpider z:0 tag:2];
-            [spiders addObject:tempSpider];
+            [self removeChild:curRock cleanup:YES];
+            [rocks removeObject:curRock];
+            XRock* tempRock =[XRock create];
+            CGSize size = [tempRock texture].contentSize;
+            tempRock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
+            [self addChild:tempRock z:0 tag:2];
+            [rocks addObject:tempRock];
             
         }
-        //            [spiders removeAllObjects];
-        
-        //        [self initSpiders];
     }
 
 }
 
-#pragma mark spider
--(void) initSpiders
+#pragma mark rock
+-(void) initRocks
 {
-    CCSprite* tempSpider = [CCSprite spriteWithFile:@"balls.png"];
-    float imageWidth = [tempSpider texture].contentSize.width;
-    int numSpiders = screenSize.width / imageWidth;
+    XRock* tempRock = [XRock create];
+    float imageWidth = [tempRock texture].contentSize.width;
+    int numRocks = screenSize.width / imageWidth;
 
-    spiders = [[CCArray alloc] initWithCapacity:numSpiders];
-    for (int i = 0; i < numSpiders; i++)
+    rocks = [[CCArray alloc] initWithCapacity:numRocks];
+    for (int i = 0; i < numRocks; i++)
     {
-        CCSprite* spider = [CCSprite spriteWithFile:@"balls.png"];
-        [self addChild:spider z:0 tag:2];
-        // Also add the spider to the spiders array.
-        [spiders addObject:spider];
+        XRock *rock = [XRock create];
+        [self addChild:rock z:0 tag:2];
+        [rocks addObject:rock];
     }
-    // call the method to reposition all spiders
-    [self resetSpiders];
+    [self resetRocks];
     impactDistanceSquared = imageWidth/2 * imageWidth/2;
 }
 
--(void) resetSpiders
+-(void) resetRocks
 {
-    CCSprite* tempSpider = [spiders lastObject];
-    CGSize size = [tempSpider texture].contentSize;
-    int numSpiders = [spiders count];
-    for (int i = 0; i < numSpiders; i++)
+    XRock* tempRock = [rocks lastObject];
+    CGSize size = [tempRock texture].contentSize;
+    int numRocks = [rocks count];
+    for (int i = 0; i < numRocks; i++)
     {
-        CCSprite *spider = [spiders objectAtIndex:i];
-        spider.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
-        [spider stopAllActions];
+        XRock *rock = [rocks objectAtIndex:i];
+        rock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
+        [rock stopAllActions];
     }
-    [self unschedule:@selector(spidersUpdate:)];
-    [self schedule:@selector(spidersUpdate:) interval:0.7f];
-    numSpidersMoved = 0;
-    spiderMoveDuration = 1.0f;
+    [self unschedule:@selector(rocksUpdate:)];
+    [self schedule:@selector(rocksUpdate:) interval:0.7f];
+    numRocksMoved = 0;
+    rockMoveDuration = 1.0f;
 }
 
--(void) spidersUpdate:(ccTime)delta
+-(void) rocksUpdate:(ccTime)delta
 {
     for (int i = 0; i < 10; i++)
     {
-        int randomSpiderIndex = CCRANDOM_0_1() * [spiders count];
-        CCSprite* spider = [spiders objectAtIndex:randomSpiderIndex];
+        int randomRockIndex = CCRANDOM_0_1() * [rocks count];
+        NSLog(@"%d",[rocks count]);
+        XRock* rock = [rocks objectAtIndex:randomRockIndex];
         
-        if ([spider numberOfRunningActions] == 0)
+        if ([rock numberOfRunningActions] == 0)
         {
             
-            [self runSpiderMoveSequence:spider];
+            [self runRockMoveSequence:rock];
             break;
         }
     }
 }
 
--(void) runSpiderMoveSequence:(CCSprite*)spider {
+-(void) runRockMoveSequence:(XRock*)rock {
     
-    numSpidersMoved++;
-    if (numSpidersMoved % 4 == 0 && spiderMoveDuration > 2.0f) {
-        spiderMoveDuration -= 0.1f;
+    numRocksMoved++;
+    if (numRocksMoved % 4 == 0 && rockMoveDuration > 2.0f) {
+        rockMoveDuration -= 0.1f;
     }
 
-// TODO 降低难度
-//    CGPoint belowScreenPosition = player?player.position:CGPointMake(spider.position.x,
-//    -[spider texture].contentSize.height);
-    CGPoint belowScreenPosition = CGPointMake(spider.position.x, -[spider texture].contentSize.height);
+// TODO 降低难度吧？
+    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
+    -[rock texture].contentSize.height);
+//    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
 
-    CCMoveTo* move = [CCMoveTo actionWithDuration:spiderMoveDuration
+    CCMoveTo* move = [CCMoveTo actionWithDuration:rockMoveDuration
                                          position:belowScreenPosition];
-    CCCallFuncN* callDidDrop = [CCCallFuncN actionWithTarget:self selector:@selector(spiderDidDrop:)];
+    CCCallFuncN* callDidDrop = [CCCallFuncN actionWithTarget:self selector:@selector(rockDidDrop:)];
     CCSequence* sequence = [CCSequence actions:move, callDidDrop, nil];
-    [spider runAction:sequence];
+    [rock runAction:sequence];
 }
 
--(void) spiderDidDrop:(id)sender
+-(void) rockDidDrop:(id)sender
 {
-    // Make sure sender is actually of the right class.
-    NSAssert([sender isKindOfClass:[CCSprite class]], @"sender is not a CCSprite!");
-    CCSprite* spider = (CCSprite*)sender;
-    // move the spider back up outside the top of the screen
-    CGPoint pos = spider.position;
-    pos.y = screenSize.height + [spider texture].contentSize.height;
-    spider.position = pos;
+    NSAssert([sender isKindOfClass:[XRock class]], @"sender is not a CCSprite!");
+    XRock* rock = (XRock*)sender;
+    // move the rock back up outside the top of the screen
+    CGPoint pos = rock.position;
+    pos.y = screenSize.height + [rock texture].contentSize.height;
+    rock.position = pos;
 }
 #pragma -
 #pragma mark touch Event
@@ -340,8 +328,6 @@
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     CGPoint location = [self convertTouchToNodeSpace:[touches anyObject]];
-    
-//    CGSize size = [[CCDirector sharedDirector] winSize];
     CGPoint center = player.position;
     
     float angle = (float)M_PI/2 - atanf((location.y - center.y) / (location.x - center.x));
@@ -368,29 +354,23 @@
 //    
 //    [self pointTo:angle];
 //}
-
-#pragma -
-#pragma shootAction
 - (void) pointTo:(float) angleInRadians
 {
 	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
-    for (CCNode *bullet in bullets) {
+    for (Xbullet *bullet in bullets) {
         bullet.rotation =CC_RADIANS_TO_DEGREES(angleInRadians);
     }
 }
 - (void) shoot:(float) angleInRadians
 {
-	
-//	CGSize size = [[CCDirector sharedDirector] winSize];
-	CGPoint center = player.position;
+    CGPoint center = player.position;
 	
 	CGPoint initialPoint = ccp(center.x + sinf(angleInRadians)*50.0f,
 							   center.y + cosf(angleInRadians)*50.0f);
 	CGPoint endPoint = ccp(center.x + sinf(angleInRadians)*600.0f,
 						   center.y + cosf(angleInRadians)*600.0f);
 	
-	CCSprite* bullet = [CCSprite spriteWithFile:@"bullet.png"];
-//	bullet.scale = 0.3f;
+	Xbullet* bullet = [Xbullet create];
 	bullet.position = initialPoint;
 	[self addChild:bullet];
 	[bullets addObject:bullet];
@@ -401,24 +381,25 @@
 								nil];
 	[bullet runAction:action];
     [self pointTo:angleInRadians];
-//	[[OALSimpleAudio sharedInstance] playEffect:SHOOT_SOUND];
 }
--(void) removeBullet:(CCNode*) bullet
+
+-(void) removeBullet:(Xbullet*) bullet
 {
 	[bullets removeObject:bullet];
-	[self removeChild:bullet cleanup:YES];
+    [bullet destroy];
 }
-- (void) removeSpider:(CCNode*) spider
-{
-    int removeIndex=[spiders indexOfObject:spider];
-	[spiders removeObject:spider];
-	[self removeChild:spider cleanup:YES];
-    CCSprite* tempSpider = [CCSprite spriteWithFile:@"balls.png"];
-    CGSize size = [tempSpider texture].contentSize;
 
-    tempSpider.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height +size.height);
-    [self addChild:tempSpider z:0 tag:2];
-    [spiders addObject:tempSpider];
+- (void) removeRock:(XRock*) rock
+{
+    int removeIndex=[rocks indexOfObject:rock];
+	[rocks removeObject:rock];
+    [rock destroy];
+    XRock *tempRock =[XRock create];
+    CGSize size = [tempRock texture].contentSize;
+
+    tempRock.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height +size.height);
+    [self addChild:tempRock z:0 tag:2];
+    [rocks addObject:tempRock];
 }
 
 #pragma -
@@ -449,75 +430,76 @@
             }
         }
     }
+    for(Xbullet* bullet in bullets)
+    {
+        for(XRock* rock in rocks){
+            if([self collide:bullet and:rock]){
+                [self removeRock:rock];
+                [self removeBullet:bullet];
+                _totalTime +=2;//加分
+                    break;
+            }
+        }
+        
+    }
 }
 
 #pragma -
--(void)checkForBulletCollision{
-    CCNode* bulletToRemove = nil;
-    CCNode* spiderToRemove = nil;
-    
-    // Naive collision detection algorithm
-    for(CCNode* bullet in bullets)
-    {
-        for(CCNode* spider in spiders)
-        {
-            float xDistance = spider.position.x - bullet.position.x;
-            float yDistance = spider.position.y - bullet.position.y;
-            if(xDistance * xDistance + yDistance * yDistance < impactDistanceSquared)
-            {
-                bulletToRemove = bullet;
-                spiderToRemove = spider;
-                break;
-            }
-        }
-        if(nil != bulletToRemove)
-        {
-            break;
-        }
-    }
-    if(nil != bulletToRemove)
-    {
-        Effect *effect = [Effect create];
-//        effect.scale =0.5;
-        [effect sparkExplode:self at:spiderToRemove.position];
-//        [effect explode:self at:spiderToRemove.position];
-        totalTime +=2;//加分
-        [self removeBullet:bulletToRemove];
-        [self removeSpider:spiderToRemove];
-    }
-    
-}
+//-(void)checkForBulletCollision{
+//    Xbullet* bulletToRemove = nil;
+//    XRock* rockToRemove = nil;
+//    
+//    for(Xbullet* bullet in bullets)
+//    {
+//        for(XRock* rock in rocks)
+//        {
+//            float xDistance = rock.position.x - bullet.position.x;
+//            float yDistance = rock.position.y - bullet.position.y;
+//            if(xDistance * xDistance + yDistance * yDistance < impactDistanceSquared)
+//            {
+//                bulletToRemove = bullet;
+//                rockToRemove = rock;
+//                break;
+//            }
+//        }
+//        if(nil != bulletToRemove)
+//        {
+//            break;
+//        }
+//    }
+//    if(nil != bulletToRemove)
+//    {
+//        Effect *effect = [Effect create];
+//        [effect sparkExplode:self at:rockToRemove.position];
+//        _totalTime +=2;//加分
+//        [self removeBullet:bulletToRemove];
+//        [self removeRock:rockToRemove];
+//    }
+//}
 -(void) startScheduleForCollision{
     [self schedule:@selector(checkForCollision) interval:1/60];
 }
 
 -(void) checkForCollision
 {
-    // Assumption: both player and spider images are squares.
     float playerImageSize = [player texture].contentSize.width;
-    float spiderImageSize = [[spiders lastObject] texture].contentSize.width;
+    float rockImageSize = [[rocks lastObject] texture].contentSize.width;
     float playerCollisionRadius = playerImageSize * 0.4f;
-    float spiderCollisionRadius = spiderImageSize * 0.4f;
-    // This collision distance will roughly equal the image shapes.
-    float maxCollisionDistance = playerCollisionRadius + spiderCollisionRadius;
-    int numSpiders = [spiders count];
-    for (int i = 0; i < numSpiders; i++)
+    float rockCollisionRadius = rockImageSize * 0.4f;
+    float maxCollisionDistance = playerCollisionRadius + rockCollisionRadius;
+    int numRocks = [rocks count];
+    for (int i = 0; i < numRocks; i++)
     {
-        CCSprite* spider = [spiders objectAtIndex:i];
-        if ([spider numberOfRunningActions] == 0)
+        XRock* rock = [rocks objectAtIndex:i];
+        if ([rock numberOfRunningActions] == 0)
         {
-            // This spider isn't even moving so we can skip checking it.
             continue;
         }
-        // Get the distance between player and spider.
-        float actualDistance = ccpDistance(player.position, spider.position);
-        // Are the two objects closer than allowed?
+        float actualDistance = ccpDistance(player.position, rock.position);
         if (actualDistance < maxCollisionDistance)
         {
             [self unschedule:@selector(checkForCollision)];
 
-            // Game Over (just restart the game for now)
-//            [self resetSpiders];
             [player destroy];
             player =nil;
             playerlife-=1;
@@ -525,18 +507,11 @@
             [self unscheduleUpdate];
             if(playerlife<=0){  //游戏结束
                 self.isTouchEnabled =NO;
-                //下面的可以删去
-                [self unschedule:@selector(spidersUpdate:)];
+                
+                [self unschedule:@selector(rocksUpdate:)];
                 CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"YOU LOSE" fontName:@"Marker Felt" fontSize:40];
                 endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
                 [self addChild:endingText z:30 tag:59];
-                
-                // Standard method to create a button
-//                CCMenuItem *starMenuItem =[CCMenuItemImage itemWithNormalImage:@"ButtonPlus.png" selectedImage:@"ButtonPlus.png" target:self selector:@selector(restartGame:)];
-//                starMenuItem.position = ccp(60, 60);
-//                CCMenu *starMenu = [CCMenu menuWithItems:starMenuItem, nil];
-//                starMenu.position = CGPointZero;
-//                [self addChild:starMenu z:60 tag:60];
                 
                 CCDelayTime *delayTime =[CCDelayTime actionWithDuration:1];
                 CCCallFuncN* callFunc = [CCCallFuncN actionWithTarget:self selector:@selector(gameOver)];
@@ -549,13 +524,13 @@
             }
             
             //停止敌人运动
-//            int numSpiders = [spiders count];
-//            for (int i = 0; i < numSpiders; i++)
+//            int numRocks = [rocks count];
+//            for (int i = 0; i < numRocks; i++)
 //            {
-//                CCSprite *spider = [spiders objectAtIndex:i];
-//                [spider stopAllActions];
+//                XRock *rock = [rocks objectAtIndex:i];
+//                [rock stopAllActions];
 //            }
-//            [self unschedule:@selector(spidersUpdate:)];
+//            [self unschedule:@selector(rocksUpdate:)];
 
             break;
         }
@@ -570,7 +545,7 @@
     [self removeChildByTag:60 cleanup:YES]; // BUTTON
     playerlife = 3 ;
     [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
-    [self resetSpiders];
+    [self resetRocks];
     [self resetGame];
 }
 //-(void)startShoot
@@ -581,13 +556,13 @@
 {
     [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
     [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
-
+    [Config sharedConfig].scoreValue =score;
     CCScene * scene = [GameOverScene scene];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
 }
 #pragma -
 -(void)resetGame{
-//    totalTime = 0;
+//    _totalTime = 0;
 //    score= 0;
     [self initPlayer];
     self.isTouchEnabled =YES;
@@ -665,8 +640,6 @@
     [self addChild:enemy z:enemy.zOrder tag:1000];
     [enemy runAction:tempAction];
     [enemy_items addObject:enemy];
-    NSLog(@"-----ADD_ENEMY------:%@",enemy);
-    NSLog(@"-----ADD_ENEMY_ITEMS------:%@",enemy_items);
 }
 
 -(void)repeatAction:(CCNode *)pSender
@@ -678,11 +651,11 @@
 }
 - (void) update:(ccTime)delta
 {
-    totalTime += delta;
-    int currentTime = (int)totalTime;
-    if([Config sharedConfig].scoreValue < currentTime){
-        [Config sharedConfig].scoreValue = currentTime;
-        [scoreLable setString:[NSString stringWithFormat:@"%i",[Config sharedConfig].scoreValue]];
+    _totalTime += delta;
+    int currentTime = (int)_totalTime;
+    if(score < currentTime){
+        score = currentTime;
+        [scoreLable setString:[NSString stringWithFormat:@"%i",score]];
     }
     
     CGPoint pos = player.position;
@@ -702,14 +675,14 @@
     }
     [player setPosition:pos];
     [self checkIsCollide];
-    [self checkForBulletCollision];
+//    [self checkForBulletCollision];
 //    [self checkForCollision];
 }
 -(void) dealloc
 {
-//    [spiders release];
     [bullets release];
-    spiders = nil;
+    bullets =nil;
+    rocks = nil;
     [super dealloc];
 }
 

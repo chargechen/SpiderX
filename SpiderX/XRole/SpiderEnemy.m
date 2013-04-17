@@ -33,7 +33,7 @@ EnemyType EnemyUnit[] = {
     {4,@"E4.png",@"W2.png",10,2,150},
     {5,@"E5.png",@"W2.png",15,2,200},
 };
-/**自己的init函数*/
+
 +(id) create:(EnemyType) type
 {
     return [[[self alloc] enemyInit:type] autorelease];
