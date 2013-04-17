@@ -196,17 +196,7 @@
 
 
 -(void) initPlayer{
-//    CCTexture2D *texture = [[CCTextureCache sharedTextureCache] addImage: @"ship.png"];
-//    player =   [CCSprite spriteWithTexture:texture];
-    player =[Xplayer create];
-    
-//    playerStreak= [CCMotionStreak streakWithFade:0.2 minSeg:2 width:46 color:ccc3(255,255,255) texture:texture];
-    [self addChild:player z:0 tag:1];
-//    [self addChild:playerStreak z:0 tag:2];
-    float imageHeight = [player texture].contentSize.height;
-    player.position =CGPointMake(screenSize.width/2, imageHeight/2);
-//    playerStreak.position =CGPointMake(screenSize.width/2, imageHeight/2);
-    
+    player =[Xplayer create];    
     CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
     CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
     [player runAction:[CCSequence actions:bl, call,nil]];
@@ -554,12 +544,7 @@
 
             // Game Over (just restart the game for now)
 //            [self resetSpiders];
-            Effect *effect = [Effect create];
-            [effect sparkExplode:self at:player.position];
-
-            [self removeChild:player cleanup:YES];
-            player =nil;
-//            [self removeChild:playerStreak cleanup:YES];
+            [player destroy];
             playerlife-=1;
             [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
             [self unscheduleUpdate];
@@ -740,7 +725,6 @@
         playerVelocity = CGPointZero;
     }
     player.position = pos;
-//    playerStreak.position =pos;
     [self checkIsCollide];
     [self checkForBulletCollision];
 //    [self checkForCollision];
