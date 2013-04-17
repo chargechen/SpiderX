@@ -430,18 +430,66 @@
             }
         }
     }
+    
+    Xbullet* bulletToRemove = nil;
+    XRock* rockToRemove = nil;
+    SpiderEnemy* enemyToRemove =nil;
     for(Xbullet* bullet in bullets)
     {
-        for(XRock* rock in rocks){
+        for(XRock* rock in rocks)
+        {
             if([self collide:bullet and:rock]){
-                [self removeRock:rock];
-                [self removeBullet:bullet];
-                _totalTime +=2;//加分
-                    break;
+                bulletToRemove = bullet;
+                rockToRemove = rock;
+                break;
             }
         }
+        if(nil != rockToRemove)
+        {
+            break;
+        }
+        for(SpiderEnemy* enemy in enemy_items)
+        {
+                if([self collide:enemy and:bullet]){
+                    bulletToRemove = bullet;
+                    enemyToRemove = enemy;
+                    break;
+                }
+         }
+         if(nil != rockToRemove)
+         {
+            break;
+         }
         
     }
+    if(nil != bulletToRemove)
+    {
+        if(rockToRemove!=nil){
+            [self removeRock:rockToRemove];
+            _totalTime +=2;//加分
+        }
+        if(enemyToRemove!=nil){
+            [enemyToRemove destroy];
+            [enemy_items removeObject:enemyToRemove];
+        }
+        if(bulletToRemove!=nil){
+            [self removeBullet:bulletToRemove];
+        }
+    }
+    
+    
+//    for(Xbullet* bullet in bullets)
+//    {
+//        for(XRock* rock in rocks){
+//            if([self collide:bullet and:rock]){
+//                [self removeRock:rock];
+//                [self removeBullet:bullet];
+//                _totalTime +=2;//加分
+//                    break;
+//            }
+//        }
+//        
+//    }
 }
 
 #pragma -
