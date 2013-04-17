@@ -57,7 +57,7 @@ EnemyType EnemyUnit[] = {
         m_HP = type.hp;
         m_moveType = type.moveType;
         m_scoreValue = type.scoreValue;
-        [self schedule:@selector(shoot) interval:m_delayTime];
+//        [self schedule:@selector(shoot) interval:m_delayTime];
     }
 	
 	return self;    

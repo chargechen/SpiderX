@@ -9,20 +9,18 @@
 #import "Xplayer.h"
 #import "Effect.h"
 @implementation Xplayer
-+(id) create {
-    return [[[self alloc] initPlayer] autorelease];
++(id) createIn:(CCNode *)parent {
+    return [[[self alloc] initPlayer:parent] autorelease];
 }
 
--(id) initPlayer{
-    CGSize screenSize = [[CCDirector sharedDirector]winSize];
+-(id) initPlayer:(CCNode*)parent{
     CCTexture2D *texture = [[CCTextureCache sharedTextureCache] addImage: @"ship.png"];
-    float imageHeight = texture.contentSize.height;
-    if((self =  [[super initWithTexture:texture] autorelease])){
-        playerStreak= [CCMotionStreak streakWithFade:0.2 minSeg:2 width:46 color:ccc3(255,255,255) texture:texture];
-        self.position =CGPointMake(screenSize.width/2, imageHeight/2);
-        playerStreak.position =CGPointMake(screenSize.width/2, imageHeight/2);
-        [self.parent addChild:self z:0 tag:1];
-        [self.parent addChild:playerStreak z:0 tag:2];
+    if((self =  [super initWithTexture:texture])){
+        playerStreak= [CCMotionStreak streakWithFade:0.2 minSeg:2 width:texture.contentSize.height color:ccc3(255,255,255) texture:texture];
+        [self setAnchorPoint:ccp(0,0)];
+        [playerStreak setAnchorPoint:ccp(0,0)];
+        [parent addChild:self z:0 tag:1];
+        [parent addChild:playerStreak z:0 tag:2];
     }
     return self;
 }
@@ -38,9 +36,10 @@
     [playerStreak removeFromParentAndCleanup:YES];
     self = nil;
 }
+
 -(void)setPosition:(CGPoint)position
 {
-    self.position =position;
+    [super setPosition:position];
     playerStreak.position = position;
 }
 

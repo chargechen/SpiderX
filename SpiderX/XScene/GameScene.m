@@ -196,7 +196,8 @@
 
 
 -(void) initPlayer{
-    player =[Xplayer create];    
+    player =[Xplayer createIn:self];
+    [player setPosition:CGPointMake(screenSize.width/2,0)];
     CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
     CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
     [player runAction:[CCSequence actions:bl, call,nil]];
@@ -545,6 +546,7 @@
             // Game Over (just restart the game for now)
 //            [self resetSpiders];
             [player destroy];
+            player =nil;
             playerlife-=1;
             [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
             [self unscheduleUpdate];
@@ -724,7 +726,7 @@
         pos.x = rightBorderLimit;
         playerVelocity = CGPointZero;
     }
-    player.position = pos;
+    [player setPosition:pos];
     [self checkIsCollide];
     [self checkForBulletCollision];
 //    [self checkForCollision];

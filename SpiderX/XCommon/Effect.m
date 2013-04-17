@@ -114,7 +114,6 @@
     NSAssert([p isKindOfClass:[CCSprite class]], @"sender is not a CCSprite!");
     CCSprite* curSprite = (CCSprite*)p;
 
-    NSLog(@"%@",curSprite);
     [curSprite removeFromParentAndCleanup:YES];
 }
 @end
