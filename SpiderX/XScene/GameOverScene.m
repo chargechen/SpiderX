@@ -154,6 +154,6 @@
 {
     [[[CCDirector sharedDirector].view viewWithTag:60] removeFromSuperview];
     CCScene * scene = [GameScene scene];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionTurnOffTiles transitionWithDuration:1.2 scene:scene]];
 }
 @end

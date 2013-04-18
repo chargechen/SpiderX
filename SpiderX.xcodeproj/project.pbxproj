@@ -36,6 +36,7 @@
 		1F146841171EBE990036F08E /* XRock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F146840171EBE980036F08E /* XRock.m */; };
 		1F14684A171FA4F00036F08E /* Enemy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F146849171FA4F00036F08E /* Enemy@2x.png */; };
 		1F14684C171FA6660036F08E /* Enemy-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F14684B171FA6660036F08E /* Enemy-hd.plist */; };
+		1F146850171FE5D10036F08E /* streak.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F14684F171FE5D10036F08E /* streak.png */; };
 		1F6E7F9616FECDE500D33752 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9516FECDE500D33752 /* QuartzCore.framework */; };
 		1F6E7F9816FECDE500D33752 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9716FECDE500D33752 /* OpenGLES.framework */; };
 		1F6E7F9A16FECDE500D33752 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9916FECDE500D33752 /* OpenAL.framework */; };
@@ -215,6 +216,7 @@
 		1F146840171EBE980036F08E /* XRock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XRock.m; sourceTree = "<group>"; };
 		1F146849171FA4F00036F08E /* Enemy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Enemy@2x.png"; path = "Resources/Enemy@2x.png"; sourceTree = "<group>"; };
 		1F14684B171FA6660036F08E /* Enemy-hd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Enemy-hd.plist"; path = "Resources/Enemy-hd.plist"; sourceTree = "<group>"; };
+		1F14684F171FE5D10036F08E /* streak.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = streak.png; path = Resources/streak.png; sourceTree = "<group>"; };
 		1F6E7F9216FECDE500D33752 /* SpiderX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpiderX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F6E7F9516FECDE500D33752 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1F6E7F9716FECDE500D33752 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -604,6 +606,7 @@
 			isa = PBXGroup;
 			children = (
 				1F1467BE171D9BCD0036F08E /* bullet@2x.png */,
+				1F14684F171FE5D10036F08E /* streak.png */,
 				1F1467C2171E3B980036F08E /* explosion.plist */,
 				1F1467C4171E3BA70036F08E /* fire.png */,
 				1F1467BF171D9BCE0036F08E /* bullet.png */,
@@ -1088,6 +1091,7 @@
 				1F1467C5171E3BA70036F08E /* fire.png in Resources */,
 				1F14684A171FA4F00036F08E /* Enemy@2x.png in Resources */,
 				1F14684C171FA6660036F08E /* Enemy-hd.plist in Resources */,
+				1F146850171FE5D10036F08E /* streak.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

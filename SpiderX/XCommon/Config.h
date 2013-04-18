@@ -12,9 +12,9 @@ NSMutableArray *enemy_bullet;
 NSMutableArray *play_bullet;
 @interface Config : NSObject
 {
-    int m_scoreValue;
+    int scoreValue;
 }
-@property(nonatomic,assign)int scoreValue;
+@property(nonatomic, assign)int scoreValue;
 +(Config *)sharedConfig;
 
 @end

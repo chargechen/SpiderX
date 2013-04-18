@@ -20,6 +20,7 @@
 #define MAX_VOICE 1
 @interface GameScene(){
     CGSize screenSize;
+    CGRect m_screenRec;
 }
 @end
 @implementation GameScene
@@ -39,10 +40,11 @@
     {
         //初始化游戏数据
         screenSize = [[CCDirector sharedDirector]winSize];
+        m_screenRec =CGRectMake(0, 0, screenSize.width, screenSize.height+10);
+        
         enemy_items = [[NSMutableArray alloc]init];
         bullets = [[CCArray alloc] initWithCapacity:bulletCount];
         _totalTime =0;
-        score =0;
         [Config sharedConfig].scoreValue =0;
         playerlife = 3;
         
@@ -282,7 +284,6 @@
     for (int i = 0; i < 10; i++)
     {
         int randomRockIndex = CCRANDOM_0_1() * [rocks count];
-        NSLog(@"%d",[rocks count]);
         XRock* rock = [rocks objectAtIndex:randomRockIndex];
         
         if ([rock numberOfRunningActions] == 0)
@@ -429,11 +430,16 @@
                 break;
             }
         }
+        if (!CGRectIntersectsRect(m_screenRec,[enemy boundingBox])) {
+            [enemy destroy];
+            [enemy_items removeObject:enemy];
+            break;
+        }
     }
     
     Xbullet* bulletToRemove = nil;
     XRock* rockToRemove = nil;
-    SpiderEnemy* enemyToRemove =nil;
+//    SpiderEnemy* enemyToRemove =nil;
     for(Xbullet* bullet in bullets)
     {
         for(XRock* rock in rocks)
@@ -452,7 +458,8 @@
         {
                 if([self collide:enemy and:bullet]){
                     bulletToRemove = bullet;
-                    enemyToRemove = enemy;
+//                    enemyToRemove = enemy;
+                    [enemy hurt];
                     break;
                 }
          }
@@ -466,12 +473,12 @@
     {
         if(rockToRemove!=nil){
             [self removeRock:rockToRemove];
-            _totalTime +=2;//加分
+            [Config sharedConfig].scoreValue +=  2;//加分
         }
-        if(enemyToRemove!=nil){
-            [enemyToRemove destroy];
-            [enemy_items removeObject:enemyToRemove];
-        }
+//        if(enemyToRemove!=nil){
+//            [enemyToRemove destroy];
+//            [enemy_items removeObject:enemyToRemove];
+//        }
         if(bulletToRemove!=nil){
             [self removeBullet:bulletToRemove];
         }
@@ -604,7 +611,6 @@
 {
     [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
     [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
-    [Config sharedConfig].scoreValue =score;
     CCScene * scene = [GameOverScene scene];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
 }
@@ -699,12 +705,13 @@
 }
 - (void) update:(ccTime)delta
 {
-    _totalTime += delta;
-    int currentTime = (int)_totalTime;
-    if(score < currentTime){
-        score = currentTime;
-        [scoreLable setString:[NSString stringWithFormat:@"%i",score]];
-    }
+//    _totalTime += delta;
+//    int currentTime = (int)_totalTime;
+//    int preScore= [Config sharedConfig].scoreValue;
+//    if(preScore < currentTime){
+//        [[Config sharedConfig] setScoreValue:currentTime];
+        [scoreLable setString:[NSString stringWithFormat:@"%i",[Config sharedConfig].scoreValue]];
+//    }
     
     CGPoint pos = player.position;
     pos.x += playerVelocity.x;
@@ -723,9 +730,46 @@
     }
     [player setPosition:pos];
     [self checkIsCollide];
-//    [self checkForBulletCollision];
-//    [self checkForCollision];
+    [self removeEnemyUnit:delta];
+//    [self removeSpriteUnit:delta];
+
 }
+-(void)removeEnemyUnit:(float) dt
+{
+    for(SpiderEnemy* enemy in enemy_items)
+    {
+        [enemy update:dt];
+        if(![enemy isActive])
+        {
+            [Config sharedConfig].scoreValue += [enemy getScore];
+            [enemy destroy];
+            [enemy_items removeObject:enemy];
+            break;
+        }
+    }
+}
+
+
+//-(void)removeSpriteUnit:(float) dt
+//{
+//    CCArray *children = self.children;
+//    for (int i = 0,len =[children count]; i < len; i++) {
+//        CCSprite *selChild =  (CCSprite*)[children objectAtIndex:i];
+//        if (selChild) {
+//            if([selChild respondsToSelector:@selector(update:)]){
+//                [selChild update:dt];
+//                int tag = selChild.tag;
+//                if (tag == 1000) { //enemy
+//                    if (![((UnitSprite*)selChild) isActive]){
+//                        [((UnitSprite*)selChild) destroy];
+//                        [enemy_items removeObject:selChild];
+//                    }
+//                }
+//            }
+//            
+//        }
+//    }
+//}
 -(void) dealloc
 {
     [bullets release];

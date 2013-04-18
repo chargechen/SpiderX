@@ -26,12 +26,12 @@
 @end
 @implementation SpiderEnemy
 EnemyType EnemyUnit[] = {
-    {0,@"E0.png",@"W2.png",1,0,15},
-    {1,@"E1.png",@"W2.png",2,0,40},
-    {2,@"E2.png",@"W2.png",4,2,60},
-    {3,@"E3.png",@"W2.png",6,3,80},
-    {4,@"E4.png",@"W2.png",10,2,150},
-    {5,@"E5.png",@"W2.png",15,2,200},
+    {0,@"E0.png",@"W2.png",1,0,1},
+    {1,@"E1.png",@"W2.png",2,0,2},
+    {2,@"E2.png",@"W2.png",4,2,4},
+    {3,@"E3.png",@"W2.png",6,3,6},
+    {4,@"E4.png",@"W2.png",10,2,10},
+    {5,@"E5.png",@"W2.png",15,2,15},
 };
 
 +(id) create:(EnemyType) type
@@ -116,11 +116,16 @@ EnemyType EnemyUnit[] = {
 }
 -(void)hurt
 {
-    m_HP --;
+    m_HP --;  
+    [super hurt];
 }
+-(int)getScore
+{
+    return m_scoreValue;
+}
+
 -(void)destroy
 {
-    [[Config sharedConfig] setScoreValue:m_scoreValue];
     Effect *effect = [Effect create];
     [effect sparkExplode:self.parent at:self.position];
 

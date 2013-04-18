@@ -13,8 +13,12 @@
 -(void)destroy
 {
 }
--(void) hurt
+-(void)hurt
 {
+    CCTintTo *turnRed =[CCTintTo actionWithDuration:0.2f red:255 green:0 blue:0];
+    CCTintTo *turnNormal =[CCTintTo actionWithDuration:0.2f red:255 green:255 blue:255];
+    CCSequence* sequence = [CCSequence actions:turnRed, turnNormal,nil];
+    [self runAction:sequence];
 }
 -(CGRect) collideRect
 {

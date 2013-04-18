@@ -23,7 +23,6 @@
     CCLabelAtlas *lifeLabel;
     ccTime _totalTime;
     int playerlife;
-    int score;
     CCArray *bullets;
     float impactDistanceSquared;
     

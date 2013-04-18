@@ -29,4 +29,5 @@ extern EnemyType EnemyUnit[];
 -(void)destroy;
 -(bool)isActive;
 -(int)getMoveType;
+-(int)getScore;
 @end
