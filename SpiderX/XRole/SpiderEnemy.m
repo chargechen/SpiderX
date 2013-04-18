@@ -40,7 +40,23 @@ EnemyType EnemyUnit[] = {
 }
 +(void) sharedEnemy
 {
-    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"Enemy.plist" textureFilename:@"Enemy.png"];
+    NSString *enemyList = @"";
+    if ([UIScreen instancesRespondToSelector:@selector(scale)])  //todo tmx文件自适应高清屏
+    {
+        if ([[UIScreen mainScreen] scale]>1.0)
+        {
+            enemyList =@"Enemy-hd.plist";
+        } else
+        {
+            enemyList =@"Enemy.plist";
+        }
+    }
+    else //保护下
+    {
+        enemyList =@"Enemy.plist";
+    }
+    
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:enemyList textureFilename:@"Enemy.png"];
 }
 -(id)enemyInit:(EnemyType)type
 {
