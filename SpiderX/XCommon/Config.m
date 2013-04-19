@@ -19,4 +19,14 @@ static Config* g_config=nil;
     return g_config;
 }
 
+-(void)dealloc
+{
+    [super dealloc];
+    [enemy_bullet release];
+    [enemy_items release];
+    [play_bullet release];
+    enemy_items =nil;
+    play_bullet= nil;
+    enemy_bullet =nil;
+}
 @end

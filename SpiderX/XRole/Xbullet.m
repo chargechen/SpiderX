@@ -7,16 +7,21 @@
 //
 
 #import "Xbullet.h"
-
+#import "Config.h"
+#define defaultFile @"bullet.png"
 @implementation Xbullet
 +(id)create
 {
-    return [[[self alloc] initBullet] autorelease];
+    return [[[self alloc] initBullet:defaultFile] autorelease];
+}
++(id)createWithFile:(NSString*)file
+{
+    return [[[self alloc] initBullet:file] autorelease];
 }
 
--(id)initBullet
+-(id)initBullet:(NSString*)file
 {
-    if((self =[super initWithFile:@"bullet.png"]))
+    if((self =[super initWithFile:file]))
     {
         
     }

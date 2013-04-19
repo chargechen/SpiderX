@@ -37,6 +37,10 @@
 		1F14684A171FA4F00036F08E /* Enemy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F146849171FA4F00036F08E /* Enemy@2x.png */; };
 		1F14684C171FA6660036F08E /* Enemy-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F14684B171FA6660036F08E /* Enemy-hd.plist */; };
 		1F146850171FE5D10036F08E /* streak.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F14684F171FE5D10036F08E /* streak.png */; };
+		1F454DA61720322A00353843 /* e_bullet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DA41720322A00353843 /* e_bullet.png */; };
+		1F454DA71720322A00353843 /* e_bullet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DA51720322A00353843 /* e_bullet@2x.png */; };
+		1F454DB11720F22C00353843 /* drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F454DAE1720F22C00353843 /* drawing.m */; };
+		1F454DB21720F22C00353843 /* PDColoredProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F454DB01720F22C00353843 /* PDColoredProgressView.m */; };
 		1F6E7F9616FECDE500D33752 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9516FECDE500D33752 /* QuartzCore.framework */; };
 		1F6E7F9816FECDE500D33752 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9716FECDE500D33752 /* OpenGLES.framework */; };
 		1F6E7F9A16FECDE500D33752 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6E7F9916FECDE500D33752 /* OpenAL.framework */; };
@@ -217,6 +221,11 @@
 		1F146849171FA4F00036F08E /* Enemy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Enemy@2x.png"; path = "Resources/Enemy@2x.png"; sourceTree = "<group>"; };
 		1F14684B171FA6660036F08E /* Enemy-hd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Enemy-hd.plist"; path = "Resources/Enemy-hd.plist"; sourceTree = "<group>"; };
 		1F14684F171FE5D10036F08E /* streak.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = streak.png; path = Resources/streak.png; sourceTree = "<group>"; };
+		1F454DA41720322A00353843 /* e_bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = e_bullet.png; path = Resources/e_bullet.png; sourceTree = "<group>"; };
+		1F454DA51720322A00353843 /* e_bullet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "e_bullet@2x.png"; path = "Resources/e_bullet@2x.png"; sourceTree = "<group>"; };
+		1F454DAE1720F22C00353843 /* drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = drawing.m; sourceTree = "<group>"; };
+		1F454DAF1720F22C00353843 /* PDColoredProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDColoredProgressView.h; sourceTree = "<group>"; };
+		1F454DB01720F22C00353843 /* PDColoredProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDColoredProgressView.m; sourceTree = "<group>"; };
 		1F6E7F9216FECDE500D33752 /* SpiderX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpiderX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F6E7F9516FECDE500D33752 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1F6E7F9716FECDE500D33752 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -518,6 +527,9 @@
 				1F1467F4171E3BC40036F08E /* Config.m */,
 				1F1467F5171E3BC40036F08E /* Effect.h */,
 				1F1467F6171E3BC40036F08E /* Effect.m */,
+				1F454DAE1720F22C00353843 /* drawing.m */,
+				1F454DAF1720F22C00353843 /* PDColoredProgressView.h */,
+				1F454DB01720F22C00353843 /* PDColoredProgressView.m */,
 				1F1467F7171E3BC40036F08E /* SCListener.h */,
 				1F1467F8171E3BC40036F08E /* SCListener.m */,
 				1F1467F9171E3BC40036F08E /* UnitSprite.h */,
@@ -605,6 +617,8 @@
 		1F6E7FA816FECDE500D33752 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1F454DA41720322A00353843 /* e_bullet.png */,
+				1F454DA51720322A00353843 /* e_bullet@2x.png */,
 				1F1467BE171D9BCD0036F08E /* bullet@2x.png */,
 				1F14684F171FE5D10036F08E /* streak.png */,
 				1F1467C2171E3B980036F08E /* explosion.plist */,
@@ -1092,6 +1106,8 @@
 				1F14684A171FA4F00036F08E /* Enemy@2x.png in Resources */,
 				1F14684C171FA6660036F08E /* Enemy-hd.plist in Resources */,
 				1F146850171FE5D10036F08E /* streak.png in Resources */,
+				1F454DA61720322A00353843 /* e_bullet.png in Resources */,
+				1F454DA71720322A00353843 /* e_bullet@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1215,6 +1231,8 @@
 				1F146837171E3BC40036F08E /* GameScene.m in Sources */,
 				1F14683E171EA7380036F08E /* Xbullet.m in Sources */,
 				1F146841171EBE990036F08E /* XRock.m in Sources */,
+				1F454DB11720F22C00353843 /* drawing.m in Sources */,
+				1F454DB21720F22C00353843 /* PDColoredProgressView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

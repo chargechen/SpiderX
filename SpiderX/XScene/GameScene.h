@@ -10,7 +10,7 @@
 #import "cocos2d.h"
 #import "SCListener.h"
 #import "Xplayer.h"
-
+#import "PDColoredProgressView.h"
 @interface GameScene : CCLayer {
     Xplayer *player;
     
@@ -39,6 +39,7 @@
 @property (nonatomic,strong) UIProgressView *pv_averagePower;
 
 @property (nonatomic,strong) UIProgressView *pv_peakPower;
+@property (nonatomic,strong) PDColoredProgressView *hp_Power;
 +(id) scene;
 
 @end

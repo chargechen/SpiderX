@@ -14,7 +14,6 @@
 #import "SpiderEnemy.h"
 #import "Xbullet.h"
 #import "XRock.h"
-
 #define bulletCount 100
 #define marginLeft 10
 #define MAX_VOICE 1
@@ -27,6 +26,7 @@
 @synthesize listener;
 @synthesize pv_averagePower;
 @synthesize pv_peakPower;
+@synthesize hp_Power;
 +(id)scene
 {
     CCScene *scene =[CCScene node];
@@ -43,6 +43,8 @@
         m_screenRec =CGRectMake(0, 0, screenSize.width, screenSize.height+10);
         
         enemy_items = [[NSMutableArray alloc]init];
+        enemy_bullet =[[NSMutableArray alloc]init];
+        
         bullets = [[CCArray alloc] initWithCapacity:bulletCount];
         _totalTime =0;
         [Config sharedConfig].scoreValue =0;
@@ -53,12 +55,12 @@
         
         //语音相关
         pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        pv_averagePower.frame = CGRectMake(2, 46, 51, 3);
+        pv_averagePower.frame = CGRectMake(2, 46, 51, 103);
         pv_averagePower.tag=2;
         
         pv_peakPower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         pv_peakPower.frame = CGRectMake(2, 146, 51, 103);
-        pv_averagePower.tag=3;
+        pv_peakPower.tag=3;
         
         [[CCDirector sharedDirector].view addSubview:pv_averagePower];
         [[CCDirector sharedDirector].view addSubview:pv_peakPower];
@@ -70,6 +72,14 @@
         self.isAccelerometerEnabled = YES; //允许对重力的感应
         [self initPlayer];
         self.isTouchEnabled =YES;
+        
+        hp_Power =[[PDColoredProgressView alloc] initWithProgressViewStyle: UIProgressViewStyleDefault];
+        hp_Power.frame =CGRectMake(player.position.x, screenSize.height-player.contentSize.height,player.contentSize.width*0.7, 5);
+        hp_Power.tag = 4;
+        [hp_Power setTintColor:[UIColor greenColor]];
+        hp_Power.progress =[player getHp];
+        [[CCDirector sharedDirector].view addSubview:hp_Power];
+
         
         [self schedule:@selector(addEnemyToGameLayer) interval:1]; //每隔1秒生成1个敌人
         [self scheduleUpdate];
@@ -483,20 +493,22 @@
             [self removeBullet:bulletToRemove];
         }
     }
-    
-    
-//    for(Xbullet* bullet in bullets)
-//    {
-//        for(XRock* rock in rocks){
-//            if([self collide:bullet and:rock]){
-//                [self removeRock:rock];
-//                [self removeBullet:bullet];
-//                _totalTime +=2;//加分
-//                    break;
-//            }
-//        }
-//        
-//    }
+    for(Xbullet *e_bullet in enemy_bullet)
+    {
+        if([self collide:e_bullet and:player]){
+            if (player) {
+                [e_bullet destroy];
+                [enemy_bullet removeObject:e_bullet];
+                [player hurt];
+                break;
+            }
+            if (!CGRectIntersectsRect(m_screenRec,[e_bullet boundingBox])) {
+                [e_bullet destroy];
+                [enemy_bullet removeObject:e_bullet];
+                break;
+            }
+        }
+    }
 }
 
 #pragma -
@@ -537,57 +549,20 @@
 
 -(void) checkForCollision
 {
-    float playerImageSize = [player texture].contentSize.width;
-    float rockImageSize = [[rocks lastObject] texture].contentSize.width;
-    float playerCollisionRadius = playerImageSize * 0.4f;
-    float rockCollisionRadius = rockImageSize * 0.4f;
-    float maxCollisionDistance = playerCollisionRadius + rockCollisionRadius;
-    int numRocks = [rocks count];
-    for (int i = 0; i < numRocks; i++)
+    for(XRock *rock in rocks)
     {
-        XRock* rock = [rocks objectAtIndex:i];
         if ([rock numberOfRunningActions] == 0)
         {
-            continue;
+            continue;   //没在动的直接忽略
         }
-        float actualDistance = ccpDistance(player.position, rock.position);
-        if (actualDistance < maxCollisionDistance)
-        {
-            [self unschedule:@selector(checkForCollision)];
-
-            [player destroy];
-            player =nil;
-            playerlife-=1;
-            [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
-            [self unscheduleUpdate];
-            if(playerlife<=0){  //游戏结束
-                self.isTouchEnabled =NO;
-                
-                [self unschedule:@selector(rocksUpdate:)];
-                CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"YOU LOSE" fontName:@"Marker Felt" fontSize:40];
-                endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
-                [self addChild:endingText z:30 tag:59];
-                
-                CCDelayTime *delayTime =[CCDelayTime actionWithDuration:1];
-                CCCallFuncN* callFunc = [CCCallFuncN actionWithTarget:self selector:@selector(gameOver)];
-                CCSequence* sequence = [CCSequence actions:delayTime,callFunc, nil];
-                [self runAction:sequence];
-                
-            }else{
-                self.isTouchEnabled =NO;
-                [self performSelector:@selector(resetGame) withObject:nil afterDelay:0.5];
+        if([self collide:rock and:player]){
+            if (player) {
+                [player hurt];
+                break;
             }
-            
-            //停止敌人运动
-//            int numRocks = [rocks count];
-//            for (int i = 0; i < numRocks; i++)
-//            {
-//                XRock *rock = [rocks objectAtIndex:i];
-//                [rock stopAllActions];
-//            }
-//            [self unschedule:@selector(rocksUpdate:)];
-
-            break;
+        }
+        if (!CGRectIntersectsRect(m_screenRec, [rock boundingBox])) {
+            [self removeRock:rock];
         }
     }
 }
@@ -609,6 +584,7 @@
 //}
 -(void) gameOver
 {
+    [[[CCDirector sharedDirector].view viewWithTag:4] removeFromSuperview];
     [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
     [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
     CCScene * scene = [GameOverScene scene];
@@ -619,6 +595,7 @@
 //    _totalTime = 0;
 //    score= 0;
     [self initPlayer];
+    hp_Power.hidden =NO;
     self.isTouchEnabled =YES;
 //    [scoreLable setString:@"0"];
     [self scheduleUpdate];
@@ -675,7 +652,7 @@
             break;
             
         case 2:
-            offset = ccp(0, -100 - 200 * CCRANDOM_0_1());
+            offset = ccp(0, -100 - 150 * CCRANDOM_0_1());
             a0 = [CCMoveBy actionWithDuration:0.5 position:offset];
             a1 = [CCMoveBy actionWithDuration:1 position:ccp(-50-100*CCRANDOM_0_1(), 0)];
             onComplete = [CCCallFuncN actionWithTarget:self selector:@selector(repeatAction:)];
@@ -729,12 +706,31 @@
         playerVelocity = CGPointZero;
     }
     [player setPosition:pos];
+    hp_Power.center = CGPointMake(pos.x, screenSize.height-pos.y*2-5);
+//    hp_Power.frame =CGRectMake(player.position.x, screenSize.height-player.contentSize.height,player.contentSize.width, 3);
+
     [self checkIsCollide];
-    [self removeEnemyUnit:delta];
-//    [self removeSpriteUnit:delta];
+//    [self removeEnemyUnit:delta];
+    [self removeSpriteUnit:delta];
 
 }
--(void)removeEnemyUnit:(float) dt
+//-(void)removeEnemyUnit:(float) dt
+//{
+//    for(SpiderEnemy* enemy in enemy_items)
+//    {
+//        [enemy update:dt];
+//        if(![enemy isActive])
+//        {
+//            [Config sharedConfig].scoreValue += [enemy getScore];
+//            [enemy destroy];
+//            [enemy_items removeObject:enemy];
+//            break;
+//        }
+//    }
+//}
+
+
+-(void)removeSpriteUnit:(float) dt
 {
     for(SpiderEnemy* enemy in enemy_items)
     {
@@ -747,35 +743,49 @@
             break;
         }
     }
+if(player){
+    [player update:dt];
+    hp_Power.progress =[player getHp]*0.1;
+    if(![player isActive])
+    {
+        [self unschedule:@selector(checkForCollision)];
+        [player destroy];
+        hp_Power.hidden =YES;
+        player =nil;
+        playerlife-=1;
+        [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
+        [self unscheduleUpdate];
+        if(playerlife<=0){  //游戏结束
+            self.isTouchEnabled =NO;
+            
+            [self unschedule:@selector(rocksUpdate:)];
+            CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"YOU LOSE" fontName:@"Marker Felt" fontSize:40];
+            endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
+            [self addChild:endingText z:30 tag:59];
+            
+            CCDelayTime *delayTime =[CCDelayTime actionWithDuration:1];
+            CCCallFuncN* callFunc = [CCCallFuncN actionWithTarget:self selector:@selector(gameOver)];
+            CCSequence* sequence = [CCSequence actions:delayTime,callFunc, nil];
+            [self runAction:sequence];
+            
+        }else{
+            self.isTouchEnabled =NO;
+            [self performSelector:@selector(resetGame) withObject:nil afterDelay:0.5];
+        }
+        
+    }
 }
-
-
-//-(void)removeSpriteUnit:(float) dt
-//{
-//    CCArray *children = self.children;
-//    for (int i = 0,len =[children count]; i < len; i++) {
-//        CCSprite *selChild =  (CCSprite*)[children objectAtIndex:i];
-//        if (selChild) {
-//            if([selChild respondsToSelector:@selector(update:)]){
-//                [selChild update:dt];
-//                int tag = selChild.tag;
-//                if (tag == 1000) { //enemy
-//                    if (![((UnitSprite*)selChild) isActive]){
-//                        [((UnitSprite*)selChild) destroy];
-//                        [enemy_items removeObject:selChild];
-//                    }
-//                }
-//            }
-//            
-//        }
-//    }
-//}
+}
 -(void) dealloc
 {
+    [super dealloc];
+    [enemy_items release];
+    [enemy_bullet release];
     [bullets release];
+    enemy_items =nil;
+    enemy_bullet =nil;
     bullets =nil;
     rocks = nil;
-    [super dealloc];
 }
 
 @end

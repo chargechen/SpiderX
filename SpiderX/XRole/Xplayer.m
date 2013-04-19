@@ -8,6 +8,7 @@
 
 #import "Xplayer.h"
 #import "Effect.h"
+#define ORIGIN_HP 10
 @implementation Xplayer
 +(id) createIn:(CCNode *)parent {
     return [[[self alloc] initPlayer:parent] autorelease];
@@ -34,6 +35,9 @@
         [parent addChild:playerStreak z:0 tag:2];
         [self setPosition:CGPointMake([[CCDirector sharedDirector] winSize].width/2,texture.contentSize.height/2)];
         [playerStreak setPosition:self.position];
+        
+        m_active =true;
+        m_HP = ORIGIN_HP;
     }
     return self;
 }
@@ -53,5 +57,23 @@
     [super setPosition:position];
     playerStreak.position = position;
 }
-
+-(void)update:(float)dt
+{
+    if (m_HP <= 0) {
+        m_active = false;
+    }
+}
+-(bool)isActive
+{
+    return m_active;
+}
+-(void)hurt
+{
+    m_HP --;
+    [super hurt];
+}
+-(int)getHp
+{
+    return m_HP;
+}
 @end

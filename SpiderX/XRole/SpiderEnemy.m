@@ -9,6 +9,7 @@
 #import "SpiderEnemy.h"
 #import "Config.h"
 #import "Effect.h"
+#import "Xbullet.h"
 @interface SpiderEnemy ()
 {
     bool m_active;
@@ -30,8 +31,8 @@ EnemyType EnemyUnit[] = {
     {1,@"E1.png",@"W2.png",2,0,2},
     {2,@"E2.png",@"W2.png",4,2,4},
     {3,@"E3.png",@"W2.png",6,3,6},
-    {4,@"E4.png",@"W2.png",10,2,10},
-    {5,@"E5.png",@"W2.png",15,2,15},
+    {4,@"E4.png",@"W2.png",10,2,8},
+    {5,@"E5.png",@"W2.png",15,2,10},
 };
 
 +(id) create:(EnemyType) type
@@ -73,7 +74,10 @@ EnemyType EnemyUnit[] = {
         m_HP = type.hp;
         m_moveType = type.moveType;
         m_scoreValue = type.scoreValue;
-//        [self schedule:@selector(shoot) interval:m_delayTime];
+        if(type.type==5){
+            [self schedule:@selector(shoot) interval:m_delayTime];
+
+        }
     }
 	
 	return self;    
@@ -101,19 +105,15 @@ EnemyType EnemyUnit[] = {
 	CGPoint initialPoint = ccp(pos.x,pos.y);
 	CGPoint endPoint = ccp(pos.x,pos.y-600);
 	
-	CCSprite* bullet = [CCSprite spriteWithFile:@"explode2.jpg"];
+	Xbullet* bullet = [Xbullet createWithFile:@"e_bullet.png"];
     //	bullet.scale = 0.3f;
 	bullet.position = initialPoint;
 	[self.parent addChild:bullet];
-//	[bullets addObject:bullet];
+    [enemy_bullet addObject:bullet];
 	
-	CCActionInterval* action = [CCSequence actions:
-								[CCMoveTo actionWithDuration:1.0f position:endPoint],
-//								[CCCallFuncN actionWithTarget:self selector:@selector(removeBullet:)],
-								nil];
-	[bullet runAction:action];
-
+	[bullet runAction:[CCMoveTo actionWithDuration:1.0f position:endPoint]];
 }
+
 -(void)hurt
 {
     m_HP --;  

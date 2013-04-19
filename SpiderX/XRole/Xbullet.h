@@ -9,6 +9,9 @@
 #import "UnitSprite.h"
 
 @interface Xbullet : UnitSprite
+{
+}
 +(id)create;
--(id)initBullet;
++(id)createWithFile:(NSString*)file;
+-(id)initBullet:(NSString*)file;
 @end
