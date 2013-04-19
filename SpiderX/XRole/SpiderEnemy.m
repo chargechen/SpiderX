@@ -105,7 +105,7 @@ EnemyType EnemyUnit[] = {
 	CGPoint initialPoint = ccp(pos.x,pos.y);
 	CGPoint endPoint = ccp(pos.x,pos.y-600);
 	
-	Xbullet* bullet = [Xbullet createWithFile:@"e_bullet.png"];
+	Xbullet* bullet = [Xbullet createWithFile:@"stone.png"];
     //	bullet.scale = 0.3f;
 	bullet.position = initialPoint;
 	[self.parent addChild:bullet];
@@ -132,6 +132,7 @@ EnemyType EnemyUnit[] = {
     // 敌机爆炸，从敌机数组删除
 //    enemy_items->removeObject(this);
     [self removeFromParentAndCleanup:YES];
+    self =nil;
 //        [enemy_items removeObject:self];
 
 }

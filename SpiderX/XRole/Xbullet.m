@@ -31,5 +31,6 @@
 -(void)destroy
 {
     [self removeFromParentAndCleanup:YES];
+    self =nil;
 }
 @end

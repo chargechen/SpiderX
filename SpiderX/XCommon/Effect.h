@@ -12,6 +12,7 @@
 @interface Effect : CCNode {
 }
 +(id)create;
+-(CCParticleFire*)fire:(CCNode*)parent at:(CGPoint)pos;
 +(void)sharedExplosion;
 -(void)explode:(CCNode*)parent at:(CGPoint)pos;
 -(void)sparkExplode:(CCNode*)parent at:(CGPoint)pos;

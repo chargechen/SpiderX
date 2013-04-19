@@ -37,7 +37,17 @@
    
     [self spark:pos parent:parent scale:1.2 duration:0.7];
 }
-
+-(CCParticleFire*)fire:(CCNode*)parent at:(CGPoint)pos
+{
+    CCParticleFire *effect =[CCParticleFire node];
+//    effect.startSize=10;
+//    effect.EmissionRate= 60;
+    effect.life=0.5;
+    effect.position =pos;
+    effect.scale =self.scale;
+    [parent addChild:effect z:200];
+    return effect;
+}
 //动画加入缓存
 +(void)sharedExplosion
 {
@@ -113,5 +123,6 @@
     CCSprite* curSprite = (CCSprite*)p;
 
     [curSprite removeFromParentAndCleanup:YES];
+    curSprite =nil;
 }
 @end

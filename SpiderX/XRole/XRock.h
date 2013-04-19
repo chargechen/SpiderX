@@ -9,6 +9,10 @@
 #import "UnitSprite.h"
 
 @interface XRock : UnitSprite
+{
+    CCParticleFire *fire;
+}
 +(id)create;
 -(id)initRock;
+-(void)setPosition:(CGPoint)position;
 @end

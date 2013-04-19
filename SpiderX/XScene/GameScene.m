@@ -240,15 +240,7 @@
             
             Effect *effect = [Effect create];
             [effect explode:self at:curRock.position];
-
-            [self removeChild:curRock cleanup:YES];
-            [rocks removeObject:curRock];
-            XRock* tempRock =[XRock create];
-            CGSize size = [tempRock texture].contentSize;
-            tempRock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
-            [self addChild:tempRock z:0 tag:2];
-            [rocks addObject:tempRock];
-            
+            [self removeRock:curRock];
         }
     }
 
@@ -280,7 +272,7 @@
     for (int i = 0; i < numRocks; i++)
     {
         XRock *rock = [rocks objectAtIndex:i];
-        rock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height +size.height);
+        rock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height+size.height);
         [rock stopAllActions];
     }
     [self unschedule:@selector(rocksUpdate:)];
@@ -313,9 +305,9 @@
     }
 
 // TODO 降低难度吧？
-    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
-    -[rock texture].contentSize.height);
-//    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
+//    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
+//    -[rock texture].contentSize.height);
+    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
 
     CCMoveTo* move = [CCMoveTo actionWithDuration:rockMoveDuration
                                          position:belowScreenPosition];
@@ -408,9 +400,11 @@
     XRock *tempRock =[XRock create];
     CGSize size = [tempRock texture].contentSize;
 
-    tempRock.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height +size.height);
     [self addChild:tempRock z:0 tag:2];
-    [rocks addObject:tempRock];
+    tempRock.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height+size.height);
+
+//    [rocks addObject:tempRock];
+    [rocks insertObject:tempRock atIndex:removeIndex];
 }
 
 #pragma -
@@ -558,11 +552,13 @@
         if([self collide:rock and:player]){
             if (player) {
                 [player hurt];
+                [self removeRock:rock];
                 break;
             }
         }
-        if (!CGRectIntersectsRect(m_screenRec, [rock boundingBox])) {
+        if (rock.position.y<0 &&!CGRectIntersectsRect(m_screenRec, [rock boundingBox])) {
             [self removeRock:rock];
+            break;
         }
     }
 }

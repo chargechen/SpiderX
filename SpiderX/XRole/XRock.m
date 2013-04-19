@@ -16,18 +16,30 @@
 
 -(id)initRock
 {
-    if((self =[super initWithFile:@"balls.png"]))
+    if((self =[super initWithFile:@"stone1.png"]))
     {
-        
+
     }
     return self;
 }
 
 -(void)destroy
 {
+//    [fire removeFromParentAndCleanup:YES];
+    fire.duration =0.4;
+    fire =nil;
     Effect *effect = [Effect create];
     //        effect.scale =0.5;
     [effect sparkExplode:self.parent at:self.position];
     [self removeFromParentAndCleanup:YES];
+    self =nil;
+}
+-(void)setPosition:(CGPoint)position
+{
+    [super setPosition:position];
+    if(fire ==nil){
+        fire=[[Effect create] fire:self.parent at:position];
+    }
+    fire.position = position;
 }
 @end
