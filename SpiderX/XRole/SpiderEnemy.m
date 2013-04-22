@@ -102,7 +102,7 @@ EnemyType EnemyUnit[] = {
 {
     CGPoint pos =self.position;
 	
-	CGPoint initialPoint = ccp(pos.x,pos.y);
+	CGPoint initialPoint = ccp(pos.x,pos.y-self.contentSize.height);
 	CGPoint endPoint = ccp(pos.x,pos.y-600);
 	
 	Xbullet* bullet = [Xbullet createWithFile:@"stone.png"];
@@ -111,7 +111,7 @@ EnemyType EnemyUnit[] = {
 	[self.parent addChild:bullet];
     [enemy_bullet addObject:bullet];
 	
-	[bullet runAction:[CCMoveTo actionWithDuration:1.0f position:endPoint]];
+	[bullet runAction:[CCMoveTo actionWithDuration:2.0f position:endPoint]];
 }
 
 -(void)hurt

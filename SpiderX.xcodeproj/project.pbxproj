@@ -170,6 +170,16 @@
 		1F6E812716FECDE700D33752 /* IntroLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E812616FECDE700D33752 /* IntroLayer.m */; };
 		1F6E813316FEDD5B00D33752 /* balls.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F6E813216FEDD5B00D33752 /* balls.png */; };
 		1FCBE6B1170C18B900C945A5 /* Cyber Advance.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1FCBE6B0170C18B900C945A5 /* Cyber Advance.mp3 */; };
+		1FE0732B172516D400578897 /* GameStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE0732A172516D400578897 /* GameStartScene.m */; };
+		1FE0733017251A1500578897 /* gravity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE0732C17251A1500578897 /* gravity.png */; };
+		1FE0733117251A1500578897 /* gravity@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE0732D17251A1500578897 /* gravity@2x.png */; };
+		1FE0733217251A1500578897 /* manual.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE0732E17251A1500578897 /* manual.png */; };
+		1FE0733317251A1500578897 /* manual@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE0732F17251A1500578897 /* manual@2x.png */; };
+		1FE074B317254A0A00578897 /* SneakyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE074A71725483500578897 /* SneakyButton.m */; };
+		1FE074B417254A0A00578897 /* SneakyButtonSkinnedBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE074A91725483500578897 /* SneakyButtonSkinnedBase.m */; };
+		1FE074B517254D2800578897 /* SneakyJoystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE074AB1725483500578897 /* SneakyJoystick.m */; };
+		1FE074B617254D2800578897 /* SneakyJoystickSkinnedBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE074AD1725483600578897 /* SneakyJoystickSkinnedBase.m */; };
+		1FE074B717254D8200578897 /* SneakyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE074A51725483500578897 /* SneakyExtensions.m */; };
 		1FF52B211714446C005274C3 /* menu@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FF52B191714446B005274C3 /* menu@2x.png */; };
 		1FF52B221714446C005274C3 /* explode1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1FF52B1A1714446B005274C3 /* explode1.jpg */; };
 		1FF52B231714446C005274C3 /* explode2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1FF52B1B1714446B005274C3 /* explode2.jpg */; };
@@ -181,6 +191,18 @@
 		1FF52B2D17153CEE005274C3 /* Phoenix.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1FF52B2C17153CEE005274C3 /* Phoenix.plist */; };
 		1FF52B2F17153E94005274C3 /* ExplodingRing.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1FF52B2E17153E94005274C3 /* ExplodingRing.plist */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1FE074B2172549FA00578897 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		180071711713FA180075984B /* level01-hd.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "level01-hd.tmx"; path = "Resources/level01-hd.tmx"; sourceTree = "<group>"; };
@@ -492,6 +514,24 @@
 		1F6E812616FECDE700D33752 /* IntroLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroLayer.m; sourceTree = "<group>"; };
 		1F6E813216FEDD5B00D33752 /* balls.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = balls.png; path = Resources/balls.png; sourceTree = "<group>"; };
 		1FCBE6B0170C18B900C945A5 /* Cyber Advance.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Cyber Advance.mp3"; path = "Resources/Cyber Advance.mp3"; sourceTree = "<group>"; };
+		1FE07329172516D400578897 /* GameStartScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameStartScene.h; sourceTree = "<group>"; };
+		1FE0732A172516D400578897 /* GameStartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameStartScene.m; sourceTree = "<group>"; };
+		1FE0732C17251A1500578897 /* gravity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gravity.png; path = Resources/gravity.png; sourceTree = "<group>"; };
+		1FE0732D17251A1500578897 /* gravity@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "gravity@2x.png"; path = "Resources/gravity@2x.png"; sourceTree = "<group>"; };
+		1FE0732E17251A1500578897 /* manual.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = manual.png; path = Resources/manual.png; sourceTree = "<group>"; };
+		1FE0732F17251A1500578897 /* manual@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "manual@2x.png"; path = "Resources/manual@2x.png"; sourceTree = "<group>"; };
+		1FE074A41725483500578897 /* SneakyExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SneakyExtensions.h; sourceTree = "<group>"; };
+		1FE074A51725483500578897 /* SneakyExtensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SneakyExtensions.m; sourceTree = "<group>"; };
+		1FE074A61725483500578897 /* SneakyButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SneakyButton.h; sourceTree = "<group>"; };
+		1FE074A71725483500578897 /* SneakyButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SneakyButton.m; sourceTree = "<group>"; };
+		1FE074A81725483500578897 /* SneakyButtonSkinnedBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SneakyButtonSkinnedBase.h; sourceTree = "<group>"; };
+		1FE074A91725483500578897 /* SneakyButtonSkinnedBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SneakyButtonSkinnedBase.m; sourceTree = "<group>"; };
+		1FE074AA1725483500578897 /* SneakyJoystick.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SneakyJoystick.h; sourceTree = "<group>"; };
+		1FE074AB1725483500578897 /* SneakyJoystick.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SneakyJoystick.m; sourceTree = "<group>"; };
+		1FE074AC1725483500578897 /* SneakyJoystickSkinnedBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SneakyJoystickSkinnedBase.h; sourceTree = "<group>"; };
+		1FE074AD1725483600578897 /* SneakyJoystickSkinnedBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SneakyJoystickSkinnedBase.m; sourceTree = "<group>"; };
+		1FE074B0172548E700578897 /* ColoredCircleSprite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColoredCircleSprite.h; sourceTree = "<group>"; };
+		1FE074B1172548E700578897 /* ColoredCircleSprite.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColoredCircleSprite.m; sourceTree = "<group>"; };
 		1FF52B191714446B005274C3 /* menu@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "menu@2x.png"; path = "Resources/menu@2x.png"; sourceTree = "<group>"; };
 		1FF52B1A1714446B005274C3 /* explode1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = explode1.jpg; path = Resources/explode1.jpg; sourceTree = "<group>"; };
 		1FF52B1B1714446B005274C3 /* explode2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = explode2.jpg; path = Resources/explode2.jpg; sourceTree = "<group>"; };
@@ -527,6 +567,18 @@
 		1F1467F2171E3BC40036F08E /* XCommon */ = {
 			isa = PBXGroup;
 			children = (
+				1FE074B0172548E700578897 /* ColoredCircleSprite.h */,
+				1FE074B1172548E700578897 /* ColoredCircleSprite.m */,
+				1FE074A41725483500578897 /* SneakyExtensions.h */,
+				1FE074A51725483500578897 /* SneakyExtensions.m */,
+				1FE074A61725483500578897 /* SneakyButton.h */,
+				1FE074A71725483500578897 /* SneakyButton.m */,
+				1FE074A81725483500578897 /* SneakyButtonSkinnedBase.h */,
+				1FE074A91725483500578897 /* SneakyButtonSkinnedBase.m */,
+				1FE074AA1725483500578897 /* SneakyJoystick.h */,
+				1FE074AB1725483500578897 /* SneakyJoystick.m */,
+				1FE074AC1725483500578897 /* SneakyJoystickSkinnedBase.h */,
+				1FE074AD1725483600578897 /* SneakyJoystickSkinnedBase.m */,
 				1F1467F3171E3BC40036F08E /* Config.h */,
 				1F1467F4171E3BC40036F08E /* Config.m */,
 				1F1467F5171E3BC40036F08E /* Effect.h */,
@@ -560,6 +612,8 @@
 		1F146800171E3BC40036F08E /* XScene */ = {
 			isa = PBXGroup;
 			children = (
+				1FE07329172516D400578897 /* GameStartScene.h */,
+				1FE0732A172516D400578897 /* GameStartScene.m */,
 				1F146801171E3BC40036F08E /* GameOverScene.h */,
 				1F146802171E3BC40036F08E /* GameOverScene.m */,
 				1F146803171E3BC40036F08E /* GameScene.h */,
@@ -607,8 +661,8 @@
 				1F1467F2171E3BC40036F08E /* XCommon */,
 				1F1467FB171E3BC40036F08E /* XRole */,
 				1F146800171E3BC40036F08E /* XScene */,
-				1F6E811F16FECDE700D33752 /* AppDelegate.h */,
 				1F6E812016FECDE700D33752 /* AppDelegate.m */,
+				1F6E811F16FECDE700D33752 /* AppDelegate.h */,
 				1F6E812516FECDE700D33752 /* IntroLayer.h */,
 				1F6E812616FECDE700D33752 /* IntroLayer.m */,
 				1F6E7FA816FECDE500D33752 /* Resources */,
@@ -621,6 +675,10 @@
 		1F6E7FA816FECDE500D33752 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1FE0732C17251A1500578897 /* gravity.png */,
+				1FE0732D17251A1500578897 /* gravity@2x.png */,
+				1FE0732E17251A1500578897 /* manual.png */,
+				1FE0732F17251A1500578897 /* manual@2x.png */,
 				1F454DA41720322A00353843 /* e_bullet.png */,
 				1F454DA51720322A00353843 /* e_bullet@2x.png */,
 				1F454DB71721280B00353843 /* stone1.png */,
@@ -1027,6 +1085,7 @@
 				1F6E7F8E16FECDE500D33752 /* Sources */,
 				1F6E7F8F16FECDE500D33752 /* Frameworks */,
 				1F6E7F9016FECDE500D33752 /* Resources */,
+				1FE074B2172549FA00578897 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1116,6 +1175,10 @@
 				1F454DB61720FAB000353843 /* stone@2x.png in Resources */,
 				1F454DB91721280B00353843 /* stone1.png in Resources */,
 				1F454DBA1721280B00353843 /* stone1@2x.png in Resources */,
+				1FE0733017251A1500578897 /* gravity.png in Resources */,
+				1FE0733117251A1500578897 /* gravity@2x.png in Resources */,
+				1FE0733217251A1500578897 /* manual.png in Resources */,
+				1FE0733317251A1500578897 /* manual@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1126,7 +1189,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FE074B517254D2800578897 /* SneakyJoystick.m in Sources */,
+				1FE074B617254D2800578897 /* SneakyJoystickSkinnedBase.m in Sources */,
+				1FE074B317254A0A00578897 /* SneakyButton.m in Sources */,
+				1FE074B417254A0A00578897 /* SneakyButtonSkinnedBase.m in Sources */,
 				1F6E7FC616FECDE500D33752 /* CCAction.m in Sources */,
+				1FE074B717254D8200578897 /* SneakyExtensions.m in Sources */,
 				1F6E7FC916FECDE500D33752 /* CCActionCamera.m in Sources */,
 				1F6E7FCC16FECDE500D33752 /* CCActionCatmullRom.m in Sources */,
 				1F6E7FCF16FECDE500D33752 /* CCActionEase.m in Sources */,
@@ -1182,9 +1250,9 @@
 				1F6E807516FECDE700D33752 /* CCTileMapAtlas.m in Sources */,
 				1F6E807816FECDE700D33752 /* CCTMXLayer.m in Sources */,
 				1F6E807B16FECDE700D33752 /* CCTMXObjectGroup.m in Sources */,
+				1F6E808416FECDE700D33752 /* CCTransition.m in Sources */,
 				1F6E807E16FECDE700D33752 /* CCTMXTiledMap.m in Sources */,
 				1F6E808116FECDE700D33752 /* CCTMXXMLParser.m in Sources */,
-				1F6E808416FECDE700D33752 /* CCTransition.m in Sources */,
 				1F6E808716FECDE700D33752 /* CCTransitionPageTurn.m in Sources */,
 				1F6E808A16FECDE700D33752 /* CCTransitionProgress.m in Sources */,
 				1F6E808E16FECDE700D33752 /* cocos2d.m in Sources */,
@@ -1241,6 +1309,7 @@
 				1F146841171EBE990036F08E /* XRock.m in Sources */,
 				1F454DB11720F22C00353843 /* drawing.m in Sources */,
 				1F454DB21720F22C00353843 /* PDColoredProgressView.m in Sources */,
+				1FE0732B172516D400578897 /* GameStartScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

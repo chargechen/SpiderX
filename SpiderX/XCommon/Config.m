@@ -11,6 +11,7 @@ static Config* g_config=nil;
 
 @implementation Config
 @synthesize scoreValue;
+@synthesize controlType;
 +(Config *)sharedConfig
 {
     if (g_config == nil) {
@@ -24,9 +25,9 @@ static Config* g_config=nil;
     [super dealloc];
     [enemy_bullet release];
     [enemy_items release];
-    [play_bullet release];
+    [bullets release];
     enemy_items =nil;
-    play_bullet= nil;
+    bullets= nil;
     enemy_bullet =nil;
 }
 @end

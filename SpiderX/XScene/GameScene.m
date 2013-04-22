@@ -14,12 +14,14 @@
 #import "SpiderEnemy.h"
 #import "Xbullet.h"
 #import "XRock.h"
+
 #define bulletCount 100
 #define marginLeft 10
 #define MAX_VOICE 1
 @interface GameScene(){
     CGSize screenSize;
     CGRect m_screenRec;
+    CONTROL_TYPE controlType;
 }
 @end
 @implementation GameScene
@@ -48,8 +50,10 @@
         bullets = [[CCArray alloc] initWithCapacity:bulletCount];
         _totalTime =0;
         [Config sharedConfig].scoreValue =0;
-        playerlife = 3;
+        controlType=[Config sharedConfig].controlType;
         
+        playerlife = 3;
+                
         [Effect sharedExplosion];
         [SpiderEnemy sharedEnemy];
         
@@ -65,21 +69,22 @@
         [[CCDirector sharedDirector].view addSubview:pv_averagePower];
         [[CCDirector sharedDirector].view addSubview:pv_peakPower];
         
-        [[SCListener sharedListener] listen];
-        self.listener = [SCListener sharedListener];
-        [self schedule:@selector(checkForVoiceBomb:) interval:0.1];
+        __unsafe_unretained GameScene *selfCtl = self;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SCListener sharedListener] listen];
+            selfCtl.listener = [SCListener sharedListener];
+            [selfCtl schedule:@selector(checkForVoiceBomb:) interval:0.1];
+        });
         
         self.isAccelerometerEnabled = YES; //允许对重力的感应
-        [self initPlayer];
-        self.isTouchEnabled =YES;
-        
-        hp_Power =[[PDColoredProgressView alloc] initWithProgressViewStyle: UIProgressViewStyleDefault];
-        hp_Power.frame =CGRectMake(player.position.x, screenSize.height-player.contentSize.height,player.contentSize.width*0.7, 5);
+         hp_Power =[[PDColoredProgressView alloc] initWithProgressViewStyle: UIProgressViewStyleDefault];
         hp_Power.tag = 4;
         [hp_Power setTintColor:[UIColor greenColor]];
-        hp_Power.progress =[player getHp];
         [[CCDirector sharedDirector].view addSubview:hp_Power];
-
+        [self initPlayer];
+        [self addFireButton];
+        [self addJoystick];
+        [self addTouchDelegate:controlType];
         
         [self schedule:@selector(addEnemyToGameLayer) interval:1]; //每隔1秒生成1个敌人
         [self scheduleUpdate];
@@ -101,10 +106,47 @@
         [self addChild:lifeLabel z:40];
         [self addChild:yourlife z:40];
         [self addChild:yourScore z:40];
-        
 //        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"Cyber Advance.mp3" loop:YES];   //背景音乐开启后声音录入失效
     }
     return self;
+}
+#pragma -
+-(void) addFireButton
+{
+    float buttonRadius = 100;
+    
+	fireButton = [SneakyButton button];
+	fireButton.isHoldable = YES;
+	
+	SneakyButtonSkinnedBase* skinFireButton = [SneakyButtonSkinnedBase skinnedButton];
+	skinFireButton.defaultSprite = [CCSprite spriteWithFile:@"bullet.png"];
+	skinFireButton.pressSprite = [CCSprite spriteWithFile:@"e_bullet.png"];
+    skinFireButton.pressSprite.rotation =180;
+	skinFireButton.button = fireButton;
+
+    skinFireButton.position = CGPointMake(screenSize.width-skinFireButton.contentSize.width/2, buttonRadius * 1.5f);
+    [self addChild:skinFireButton z:100 tag:176];
+}
+-(void) addJoystick
+{
+	float stickRadius = 100;
+    
+	joystick = [SneakyJoystick joystickWithRect:CGRectMake(0, 0, stickRadius, stickRadius)];
+	joystick.autoCenter = YES;
+	
+	// Now with fewer directions
+	joystick.isDPad = YES;
+	joystick.numberOfDirections = 8;
+	
+	SneakyJoystickSkinnedBase* skinStick = [SneakyJoystickSkinnedBase skinnedJoystick];
+	skinStick.backgroundSprite = [CCSprite spriteWithFile:@"stone1.png"];
+    skinStick.backgroundSprite.scale =0.8f;
+	skinStick.backgroundSprite.color = ccMAGENTA;
+	skinStick.thumbSprite = [CCSprite spriteWithFile:@"ship.png"];
+	skinStick.thumbSprite.scale = 0.6f;
+    skinStick.position = CGPointMake(skinStick.contentSize.width/2, stickRadius * 1.5f);
+	skinStick.joystick = joystick;
+	[self addChild:skinStick z:101 tag:177];
 }
 
 #pragma -
@@ -207,6 +249,9 @@
     CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
     CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
     [player runAction:[CCSequence actions:bl, call,nil]];
+    
+    hp_Power.frame =CGRectMake((screenSize.width-player.contentSize.width*0.7)/2, screenSize.height-player.contentSize.height-8,player.contentSize.width*0.7, 5);
+    hp_Power.progress =[player getHp];
 }
 
 #pragma -
@@ -305,9 +350,9 @@
     }
 
 // TODO 降低难度吧？
-//    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
-//    -[rock texture].contentSize.height);
-    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
+    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
+    -[rock texture].contentSize.height);
+//    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
 
     CCMoveTo* move = [CCMoveTo actionWithDuration:rockMoveDuration
                                          position:belowScreenPosition];
@@ -328,6 +373,41 @@
 #pragma -
 #pragma mark touch Event
 
+-(void)addTouchDelegate:(CONTROL_TYPE)type
+{
+    switch (type) {
+        case GRAVITY_CONTROL:
+            self.isTouchEnabled =YES;
+            break;
+        case JOYSTICK_CONTROL:
+            break;
+        case GESTURE_CONTROL:
+            [[CCDirector sharedDirector].touchDispatcher addTargetedDelegate:self priority:0 swallowsTouches:YES];
+            break;
+        default:
+            break;
+    }
+}
+-(void)removeTouchDelegate:(CONTROL_TYPE)type
+{
+    switch (type) {
+        case GRAVITY_CONTROL:
+            self.isTouchEnabled =NO;
+            break;
+        case JOYSTICK_CONTROL:
+            break;
+        case GESTURE_CONTROL:
+            [[CCDirector sharedDirector].touchDispatcher removeDelegate:self];
+            break;
+        default:
+            break;
+    }
+}
+
+-(BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    return YES;
+}
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     CGPoint location = [self convertTouchToNodeSpace:[touches anyObject]];
@@ -342,21 +422,22 @@
     [self shoot:angle];
 
 }
-//- (void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *) event
-//{
-//    CGPoint location = [self convertTouchToNodeSpace:[touches anyObject]];
-//    
-//    CGSize size = [[CCDirector sharedDirector] winSize];
-//    CGPoint center = ccp(size.width/2, size.height/2);
-//    
-//    float angle = (float)M_PI/2 - atanf((location.y - center.y) / (location.x - center.x));
-//    if(location.x < center.x)
-//    {
-//        angle = (float)M_PI + angle;
-//    }
-//    
-//    [self pointTo:angle];
-//}
+-(void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    if(player){
+        CGPoint viewLocation =[touch locationInView: [ touch view]];
+        CGPoint location = [[CCDirector sharedDirector] convertToGL:viewLocation];
+        [player setPosition:location];
+        hp_Power.center = ccp(viewLocation.x,viewLocation.y-player.contentSize.height/2-8);
+    }
+}
+
+-(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
+{
+
+}
+
+#pragma -
 - (void) pointTo:(float) angleInRadians
 {
 	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
@@ -591,8 +672,9 @@
 //    _totalTime = 0;
 //    score= 0;
     [self initPlayer];
+    
     hp_Power.hidden =NO;
-    self.isTouchEnabled =YES;
+    [self addTouchDelegate:controlType];
 //    [scoreLable setString:@"0"];
     [self scheduleUpdate];
 }
@@ -686,27 +768,26 @@
         [scoreLable setString:[NSString stringWithFormat:@"%i",[Config sharedConfig].scoreValue]];
 //    }
     
-    CGPoint pos = player.position;
-    pos.x += playerVelocity.x;
-    float imageWidthHalved = [player texture].contentSize.width * 0.5f;
-    float leftBorderLimit = imageWidthHalved;
-    float rightBorderLimit = screenSize.width - imageWidthHalved;
-    if (pos.x < leftBorderLimit)
-    {
-        pos.x = leftBorderLimit;
-        playerVelocity = CGPointZero;
+    if(controlType==GRAVITY_CONTROL){
+        CGPoint pos = player.position;
+        pos.x += playerVelocity.x;
+        float imageWidthHalved = [player texture].contentSize.width * 0.5f;
+        float leftBorderLimit = imageWidthHalved;
+        float rightBorderLimit = screenSize.width - imageWidthHalved;
+        if (pos.x < leftBorderLimit)
+        {
+            pos.x = leftBorderLimit;
+            playerVelocity = CGPointZero;
+        }
+        else if (pos.x > rightBorderLimit)
+        {
+            pos.x = rightBorderLimit;
+            playerVelocity = CGPointZero;
+        }
+        [player setPosition:pos];
+        hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
     }
-    else if (pos.x > rightBorderLimit)
-    {
-        pos.x = rightBorderLimit;
-        playerVelocity = CGPointZero;
-    }
-    [player setPosition:pos];
-    hp_Power.center = CGPointMake(pos.x, screenSize.height-pos.y*2-5);
-//    hp_Power.frame =CGRectMake(player.position.x, screenSize.height-player.contentSize.height,player.contentSize.width, 3);
-
     [self checkIsCollide];
-//    [self removeEnemyUnit:delta];
     [self removeSpriteUnit:delta];
 
 }
@@ -765,7 +846,7 @@ if(player){
             [self runAction:sequence];
             
         }else{
-            self.isTouchEnabled =NO;
+            [self removeTouchDelegate:controlType];
             [self performSelector:@selector(resetGame) withObject:nil afterDelay:0.5];
         }
         
