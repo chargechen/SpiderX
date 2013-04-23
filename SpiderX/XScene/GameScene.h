@@ -43,6 +43,7 @@
     bool m_isBackTileReload;
     SneakyButton* fireButton;
 	SneakyJoystick* joystick;
+    ccTime nextShotTime;
 }
 @property (nonatomic,strong) SCListener *listener;
 @property (nonatomic,strong) UIProgressView *pv_averagePower;

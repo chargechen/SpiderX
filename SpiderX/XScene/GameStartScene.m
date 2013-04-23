@@ -33,7 +33,7 @@
 {
     if(self=[super init])
     {
-        [Config sharedConfig].controlType =GESTURE_CONTROL; //default control mode
+        [Config sharedConfig].controlType =GRAVITY_CONTROL; //default control mode
         screenSize = [[CCDirector sharedDirector]winSize];
   
         CCSprite *newGameNormal = [CCSprite spriteWithFile:@"menu.png" rect:CGRectMake(0, 0, 126, 33)];
@@ -45,11 +45,11 @@
         
         [self addChild:startMenu z:1 tag:2];
         [startMenu setPosition:ccp(screenSize.width/2,screenSize.height/2)];
-        
-        CCMenuItemImage *btnOn =[CCMenuItemImage itemWithNormalImage:@"manual.png" selectedImage:@"manual.png"];
-        CCMenuItemImage *btnOff =[CCMenuItemImage itemWithNormalImage:@"gravity.png" selectedImage:@"gravity.png"];
-        
-        CCMenuItemToggle *btnSnd= [CCMenuItemToggle itemWithTarget:self selector:@selector(doSndSwtch:) items:btnOn, btnOff, nil];
+    
+        CCMenuItemImage *btnGravity =[CCMenuItemImage itemWithNormalImage:@"gravity.png" selectedImage:@"gravity.png"];
+        CCMenuItemImage *btnManual =[CCMenuItemImage itemWithNormalImage:@"manual.png" selectedImage:@"manual.png"];
+        CCMenuItemImage *btnJoystick =[CCMenuItemImage itemWithNormalImage:@"joystick.png" selectedImage:@"joystick.png"];
+        CCMenuItemToggle *btnSnd= [CCMenuItemToggle itemWithTarget:self selector:@selector(doSndSwtch:) items:btnGravity, btnManual, btnJoystick,nil];
         
         CCMenu *menu = [CCMenu menuWithItems:btnSnd,nil];
         menu.position = ccp(screenSize.width/2,startMenu.position.y-60);
@@ -62,11 +62,21 @@
 #pragma -
 #pragma mark switchBtn
 -(void)doSndSwtch: (id) sender{
-    if([sender selectedIndex]==0)
-    {
-        [Config sharedConfig].controlType =GESTURE_CONTROL;
-    }else{
-        [Config sharedConfig].controlType =GRAVITY_CONTROL;
+    int index =[sender selectedIndex];
+    int controlMode ;
+    switch (index) {
+        case 0:
+            controlMode=GRAVITY_CONTROL;
+            break;
+        case 1:
+            controlMode =GESTURE_CONTROL;
+            break;
+        case 2:
+            controlMode =JOYSTICK_CONTROL;
+            break;
+        default:
+            break;
     }
+    [Config sharedConfig].controlType =controlMode;
 }
 @end

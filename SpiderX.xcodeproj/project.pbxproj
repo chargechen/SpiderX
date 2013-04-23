@@ -169,6 +169,8 @@
 		1F6E812116FECDE700D33752 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E812016FECDE700D33752 /* AppDelegate.m */; };
 		1F6E812716FECDE700D33752 /* IntroLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E812616FECDE700D33752 /* IntroLayer.m */; };
 		1F6E813316FEDD5B00D33752 /* balls.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F6E813216FEDD5B00D33752 /* balls.png */; };
+		1F704793172624B80097A83A /* joystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F704792172624B80097A83A /* joystick.png */; };
+		1F704795172624C80097A83A /* joystick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F704794172624C80097A83A /* joystick@2x.png */; };
 		1FCBE6B1170C18B900C945A5 /* Cyber Advance.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1FCBE6B0170C18B900C945A5 /* Cyber Advance.mp3 */; };
 		1FE0732B172516D400578897 /* GameStartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE0732A172516D400578897 /* GameStartScene.m */; };
 		1FE0733017251A1500578897 /* gravity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE0732C17251A1500578897 /* gravity.png */; };
@@ -513,6 +515,8 @@
 		1F6E812516FECDE700D33752 /* IntroLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroLayer.h; sourceTree = "<group>"; };
 		1F6E812616FECDE700D33752 /* IntroLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroLayer.m; sourceTree = "<group>"; };
 		1F6E813216FEDD5B00D33752 /* balls.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = balls.png; path = Resources/balls.png; sourceTree = "<group>"; };
+		1F704792172624B80097A83A /* joystick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = joystick.png; path = Resources/joystick.png; sourceTree = "<group>"; };
+		1F704794172624C80097A83A /* joystick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "joystick@2x.png"; path = "Resources/joystick@2x.png"; sourceTree = "<group>"; };
 		1FCBE6B0170C18B900C945A5 /* Cyber Advance.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Cyber Advance.mp3"; path = "Resources/Cyber Advance.mp3"; sourceTree = "<group>"; };
 		1FE07329172516D400578897 /* GameStartScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameStartScene.h; sourceTree = "<group>"; };
 		1FE0732A172516D400578897 /* GameStartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameStartScene.m; sourceTree = "<group>"; };
@@ -675,6 +679,8 @@
 		1F6E7FA816FECDE500D33752 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1F704792172624B80097A83A /* joystick.png */,
+				1F704794172624C80097A83A /* joystick@2x.png */,
 				1FE0732C17251A1500578897 /* gravity.png */,
 				1FE0732D17251A1500578897 /* gravity@2x.png */,
 				1FE0732E17251A1500578897 /* manual.png */,
@@ -1179,6 +1185,8 @@
 				1FE0733117251A1500578897 /* gravity@2x.png in Resources */,
 				1FE0733217251A1500578897 /* manual.png in Resources */,
 				1FE0733317251A1500578897 /* manual@2x.png in Resources */,
+				1F704793172624B80097A83A /* joystick.png in Resources */,
+				1F704795172624C80097A83A /* joystick@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

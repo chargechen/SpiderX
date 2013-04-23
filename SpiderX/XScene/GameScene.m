@@ -58,15 +58,15 @@
         [SpiderEnemy sharedEnemy];
         
         //语音相关
-        pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        pv_averagePower.frame = CGRectMake(2, 46, 51, 103);
-        pv_averagePower.tag=2;
+//        pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+//        pv_averagePower.frame = CGRectMake(2, 46, 51, 103);
+//        pv_averagePower.tag=2;
         
         pv_peakPower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         pv_peakPower.frame = CGRectMake(2, 146, 51, 103);
         pv_peakPower.tag=3;
         
-        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
+//        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
         [[CCDirector sharedDirector].view addSubview:pv_peakPower];
         
         __unsafe_unretained GameScene *selfCtl = self;
@@ -82,8 +82,12 @@
         [hp_Power setTintColor:[UIColor greenColor]];
         [[CCDirector sharedDirector].view addSubview:hp_Power];
         [self initPlayer];
-        [self addFireButton];
-        [self addJoystick];
+        
+        if(controlType==2){ //JoystickMode
+            [self addFireButton];
+            [self addJoystick];
+        }
+     
         [self addTouchDelegate:controlType];
         
         [self schedule:@selector(addEnemyToGameLayer) interval:1]; //每隔1秒生成1个敌人
@@ -110,11 +114,10 @@
     }
     return self;
 }
-#pragma -
+#pragma mark
+#pragma mark addJoystick
 -(void) addFireButton
-{
-    float buttonRadius = 100;
-    
+{    
 	fireButton = [SneakyButton button];
 	fireButton.isHoldable = YES;
 	
@@ -122,14 +125,15 @@
 	skinFireButton.defaultSprite = [CCSprite spriteWithFile:@"bullet.png"];
 	skinFireButton.pressSprite = [CCSprite spriteWithFile:@"e_bullet.png"];
     skinFireButton.pressSprite.rotation =180;
+    skinFireButton.pressSprite.scaleY=1.5;
 	skinFireButton.button = fireButton;
-
-    skinFireButton.position = CGPointMake(screenSize.width-skinFireButton.contentSize.width/2, buttonRadius * 1.5f);
-    [self addChild:skinFireButton z:100 tag:176];
+    
+    skinFireButton.position = CGPointMake(screenSize.width-30-skinFireButton.contentSize.width/2, screenSize.height-80);
+    [self addChild:skinFireButton];
 }
 -(void) addJoystick
 {
-	float stickRadius = 100;
+	float stickRadius = 330;
     
 	joystick = [SneakyJoystick joystickWithRect:CGRectMake(0, 0, stickRadius, stickRadius)];
 	joystick.autoCenter = YES;
@@ -143,13 +147,13 @@
     skinStick.backgroundSprite.scale =0.8f;
 	skinStick.backgroundSprite.color = ccMAGENTA;
 	skinStick.thumbSprite = [CCSprite spriteWithFile:@"ship.png"];
-	skinStick.thumbSprite.scale = 0.6f;
-    skinStick.position = CGPointMake(skinStick.contentSize.width/2, stickRadius * 1.5f);
+//	skinStick.thumbSprite.scale = 0.6f;
+    skinStick.position = CGPointMake(skinStick.contentSize.width/2+30, screenSize.height-50);
 	skinStick.joystick = joystick;
-	[self addChild:skinStick z:101 tag:177];
+	[self addChild:skinStick];
 }
 
-#pragma -
+#pragma mark
 #pragma mark background
 // 采用两张图循环加载来实现地图的无限滚动
 -(void)initBackground
@@ -242,7 +246,7 @@
     }
 }
 
-#pragma -
+#pragma mark
 #pragma mark player
 -(void) initPlayer{
     player =[Xplayer createIn:self];
@@ -254,7 +258,7 @@
     hp_Power.progress =[player getHp];
 }
 
-#pragma -
+#pragma mark
 #pragma mark 检测声音大于阈值则发起大招
 -(void) checkForVoiceBomb:(ccTime)delta
 {
@@ -262,13 +266,13 @@
     
     Float32 peak = levels[0].mPeakPower;
     
-    Float32 average = levels[0].mAveragePower;
+//    Float32 average = levels[0].mAveragePower;
     
     if (![listener isListening])
         
         return; 
     
-    pv_averagePower.progress=average;
+//    pv_averagePower.progress=average;
     
     pv_peakPower.progress=peak;
     if(peak>=MAX_VOICE){
@@ -370,7 +374,7 @@
     pos.y = screenSize.height + [rock texture].contentSize.height;
     rock.position = pos;
 }
-#pragma -
+#pragma mark
 #pragma mark touch Event
 
 -(void)addTouchDelegate:(CONTROL_TYPE)type
@@ -437,7 +441,7 @@
 
 }
 
-#pragma -
+#pragma mark
 - (void) pointTo:(float) angleInRadians
 {
 	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
@@ -488,7 +492,7 @@
     [rocks insertObject:tempRock atIndex:removeIndex];
 }
 
-#pragma -
+#pragma mark
 -(bool)collide:(UnitSprite*)a and:(UnitSprite*)b
 {
     if(!a || !b)
@@ -586,7 +590,7 @@
     }
 }
 
-#pragma -
+#pragma mark
 //-(void)checkForBulletCollision{
 //    Xbullet* bulletToRemove = nil;
 //    XRock* rockToRemove = nil;
@@ -643,7 +647,7 @@
         }
     }
 }
-#pragma -
+#pragma mark
 #pragma mark Button Event
 
 -(void)restartGame:(id)sender
@@ -663,11 +667,11 @@
 {
     [[[CCDirector sharedDirector].view viewWithTag:4] removeFromSuperview];
     [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
-    [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
+//    [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
     CCScene * scene = [GameOverScene scene];
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
 }
-#pragma -
+#pragma mark
 -(void)resetGame{
 //    _totalTime = 0;
 //    score= 0;
@@ -696,7 +700,7 @@
     }
 }
 
-#pragma -
+#pragma mark
 #pragma mark Enemy
 -(void) addEnemyToGameLayer
 {
@@ -760,7 +764,7 @@
 }
 - (void) update:(ccTime)delta
 {
-//    _totalTime += delta;
+//    _totalTime += delta;   //时间流逝也能得分
 //    int currentTime = (int)_totalTime;
 //    int preScore= [Config sharedConfig].scoreValue;
 //    if(preScore < currentTime){
@@ -786,6 +790,46 @@
         }
         [player setPosition:pos];
         hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
+    }else if (controlType == JOYSTICK_CONTROL)
+    {
+        _totalTime += delta;
+        NSLog(@"%d",fireButton.active);
+        // Continuous fire
+        if (fireButton.active && _totalTime > nextShotTime)
+        {
+            nextShotTime = _totalTime + 0.2f;
+            
+            [player shoot];
+        }
+        
+        // Allow faster shooting by quickly tapping the fire button.
+        if (fireButton.active == NO)
+        {
+            nextShotTime = 0;
+        }
+        
+        // Moving the ship with the thumbstick.
+
+        
+        CGPoint velocity = ccpMult(joystick.velocity,300);
+        if (!(velocity.x == 0 && velocity.y == 0))
+        {
+            CGPoint pos = CGPointMake(player.position.x + velocity.x * delta, player.position.y + velocity.y * delta);
+            if(pos.x>(screenSize.width-player.contentSize.width/2)){
+                pos.x =(screenSize.width-player.contentSize.width/2);
+            }else if(pos.x<player.contentSize.width/2){
+                pos.x =player.contentSize.width/2;
+            }
+            if(pos.y>screenSize.height-player.contentSize.height/2){
+                pos.y =screenSize.height-player.contentSize.height/2;
+            }else if(pos.y<player.contentSize.height/2){
+                pos.y=player.contentSize.height/2;
+            }
+            player.position =pos;
+            hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
+        }
+
+    
     }
     [self checkIsCollide];
     [self removeSpriteUnit:delta];

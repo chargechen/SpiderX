@@ -21,4 +21,5 @@
 -(bool)isActive;
 -(void)hurt;
 -(int)getHp;
+-(void)shoot;
 @end

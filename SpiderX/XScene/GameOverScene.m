@@ -7,7 +7,7 @@
 //
 
 #import "GameOverScene.h"
-#import "GameScene.h"
+#import "GameStartScene.h"
 #import "Config.h"
 #define SPIDER_HIGH_SCORE_PLAYER @"SPIDER_HIGH_SCORE_PLAYER"
 #define SPIDER_HIGH_SCORE @"SPIDER_HIGH_SCORE"
@@ -153,7 +153,7 @@
 -(void)playAgain
 {
     [[[CCDirector sharedDirector].view viewWithTag:60] removeFromSuperview];
-    CCScene * scene = [GameScene scene];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionTurnOffTiles transitionWithDuration:1.2 scene:scene]];
+    CCScene * scene = [GameStartScene scene];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1 scene:scene]];
 }
 @end
