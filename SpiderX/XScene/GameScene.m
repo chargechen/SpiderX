@@ -588,38 +588,6 @@
     }
 }
 
-#pragma mark
-//-(void)checkForBulletCollision{
-//    Xbullet* bulletToRemove = nil;
-//    XRock* rockToRemove = nil;
-//    
-//    for(Xbullet* bullet in bullets)
-//    {
-//        for(XRock* rock in rocks)
-//        {
-//            float xDistance = rock.position.x - bullet.position.x;
-//            float yDistance = rock.position.y - bullet.position.y;
-//            if(xDistance * xDistance + yDistance * yDistance < impactDistanceSquared)
-//            {
-//                bulletToRemove = bullet;
-//                rockToRemove = rock;
-//                break;
-//            }
-//        }
-//        if(nil != bulletToRemove)
-//        {
-//            break;
-//        }
-//    }
-//    if(nil != bulletToRemove)
-//    {
-//        Effect *effect = [Effect create];
-//        [effect sparkExplode:self at:rockToRemove.position];
-//        _totalTime +=2;//加分
-//        [self removeBullet:bulletToRemove];
-//        [self removeRock:rockToRemove];
-//    }
-//}
 -(void) startScheduleForCollision{
     [self schedule:@selector(checkForCollision) interval:1/60];
 }
@@ -657,10 +625,7 @@
     [self resetRocks];
     [self resetGame];
 }
-//-(void)startShoot
-//{
-//    
-//}
+
 -(void) gameOver
 {
     [[[CCDirector sharedDirector].view viewWithTag:4] removeFromSuperview];
@@ -791,7 +756,6 @@
     }else if (controlType == JOYSTICK_CONTROL)
     {
         _totalTime += delta;
-        NSLog(@"%d",fireButton.active);
         // Continuous fire
         if (fireButton.active && _totalTime > nextShotTime)
         {
@@ -834,21 +798,6 @@
     [self removeSpriteUnit:delta];
 
 }
-//-(void)removeEnemyUnit:(float) dt
-//{
-//    for(SpiderEnemy* enemy in enemy_items)
-//    {
-//        [enemy update:dt];
-//        if(![enemy isActive])
-//        {
-//            [Config sharedConfig].scoreValue += [enemy getScore];
-//            [enemy destroy];
-//            [enemy_items removeObject:enemy];
-//            break;
-//        }
-//    }
-//}
-
 
 -(void)removeSpriteUnit:(float) dt
 {
@@ -879,7 +828,7 @@ if(player){
             [self removeTouchDelegate:controlType];
             
             [self unschedule:@selector(rocksUpdate:)];
-            CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"YOU LOSE" fontName:@"Marker Felt" fontSize:40];
+            CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"THE END.." fontName:@"Marker Felt" fontSize:40];
             endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
             [self addChild:endingText z:30 tag:59];
             
