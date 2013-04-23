@@ -69,10 +69,10 @@
             controlMode=GRAVITY_CONTROL;
             break;
         case 1:
-            controlMode =GESTURE_CONTROL;
+            controlMode =JOYSTICK_CONTROL;
             break;
         case 2:
-            controlMode =JOYSTICK_CONTROL;
+            controlMode =GESTURE_CONTROL;
             break;
         default:
             break;

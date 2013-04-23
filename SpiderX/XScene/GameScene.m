@@ -445,9 +445,6 @@
 - (void) pointTo:(float) angleInRadians
 {
 	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
-    for (Xbullet *bullet in bullets) {
-        bullet.rotation =CC_RADIANS_TO_DEGREES(angleInRadians);
-    }
 }
 - (void) shoot:(float) angleInRadians
 {
@@ -468,6 +465,7 @@
 								[CCCallFuncN actionWithTarget:self selector:@selector(removeBullet:)],
 								nil];
 	[bullet runAction:action];
+    bullet.rotation =CC_RADIANS_TO_DEGREES(angleInRadians);
     [self pointTo:angleInRadians];
 }
 
@@ -826,6 +824,7 @@
                 pos.y=player.contentSize.height/2;
             }
             player.position =pos;
+            
             hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
         }
 
@@ -877,7 +876,7 @@ if(player){
         [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
         [self unscheduleUpdate];
         if(playerlife<=0){  //游戏结束
-            self.isTouchEnabled =NO;
+            [self removeTouchDelegate:controlType];
             
             [self unschedule:@selector(rocksUpdate:)];
             CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"YOU LOSE" fontName:@"Marker Felt" fontSize:40];
