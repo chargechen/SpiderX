@@ -653,6 +653,7 @@
     // how fast the velocity can be at most
     float maxVelocity = 100;
     playerVelocity.x = playerVelocity.x * deceleration + acceleration.x * sensitivity;
+    playerVelocity.y = playerVelocity.y * deceleration + acceleration.y * sensitivity;
     if (playerVelocity.x > maxVelocity)
     {
         playerVelocity.x = maxVelocity;
@@ -660,6 +661,14 @@
     else if (playerVelocity.x < - maxVelocity)
     {
         playerVelocity.x = - maxVelocity;
+    }
+    if(playerVelocity.y > maxVelocity)
+    {
+        playerVelocity.y =maxVelocity;
+    }
+    else if (playerVelocity.y < -maxVelocity)
+    {
+        playerVelocity.y = -maxVelocity;
     }
 }
 
@@ -738,18 +747,32 @@
     if(controlType==GRAVITY_CONTROL){
         CGPoint pos = player.position;
         pos.x += playerVelocity.x;
+        pos.y += playerVelocity.y;
+        
         float imageWidthHalved = [player texture].contentSize.width * 0.5f;
         float leftBorderLimit = imageWidthHalved;
         float rightBorderLimit = screenSize.width - imageWidthHalved;
+        float topBorderLimit = screenSize.height -imageWidthHalved;
+        float bottomLimit =  imageWidthHalved;
         if (pos.x < leftBorderLimit)
         {
             pos.x = leftBorderLimit;
-            playerVelocity = CGPointZero;
+            playerVelocity.x =0;
         }
         else if (pos.x > rightBorderLimit)
         {
             pos.x = rightBorderLimit;
-            playerVelocity = CGPointZero;
+            playerVelocity.x =0;
+        }
+        if(pos.y <bottomLimit)
+        {
+            pos.y = bottomLimit;
+            playerVelocity.y=0;
+        }
+        else if(pos.y >topBorderLimit)
+        {
+            pos.y = topBorderLimit;
+            playerVelocity.y=0;
         }
         [player setPosition:pos];
         hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
