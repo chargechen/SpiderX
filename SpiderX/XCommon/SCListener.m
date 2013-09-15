@@ -48,7 +48,7 @@ static void listeningCallback(void *inUserData, AudioQueueRef inAQ, AudioQueueBu
         
         if (sharedListener == nil)
             
-            [[self alloc] init];
+            [[[self alloc] init] autorelease];
         
     }
     
@@ -300,11 +300,9 @@ static void listeningCallback(void *inUserData, AudioQueueRef inAQ, AudioQueueBu
 
 - (id)init {
     
-    if ([super init] == nil)
-        
-        return nil;
-    
-    
+    if (self = [super init])
+    {
+    }
     
     return self;
     
@@ -325,11 +323,11 @@ static void listeningCallback(void *inUserData, AudioQueueRef inAQ, AudioQueueBu
 }
 
 
-- (void)release {
-    
-    // Do nothing.
-    
-}
+//- (void)release {
+//    
+//    // Do nothing.
+//    
+//}
 
 
 - (id)autorelease {

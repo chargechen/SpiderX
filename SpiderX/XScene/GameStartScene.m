@@ -75,6 +75,7 @@
             controlMode =GESTURE_CONTROL;
             break;
         default:
+            controlMode =GRAVITY_CONTROL;
             break;
     }
     [Config sharedConfig].controlType =controlMode;

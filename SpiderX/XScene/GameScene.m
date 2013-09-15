@@ -720,6 +720,9 @@
             tempAction =[CCSequence actions:a0,a1, nil];
             break;
         }
+        default:
+            tempAction =[CCMoveTo actionWithDuration:1 position:ccp(screenSize.width / 2, 0)];
+            break;
     }
     
     [self addChild:enemy z:enemy.zOrder tag:1000];
@@ -874,6 +877,7 @@ if(player){
     [enemy_items release];
     [enemy_bullet release];
     [bullets release];
+    [rocks release];
     enemy_items =nil;
     enemy_bullet =nil;
     bullets =nil;

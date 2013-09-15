@@ -84,7 +84,7 @@
             nameInput.returnKeyType =UIReturnKeyDone;
             nameInput.delegate = self;
             [[CCDirector sharedDirector].view addSubview:nameInput];
-            UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+            UITapGestureRecognizer *tapGr = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)] autorelease];
             tapGr.cancelsTouchesInView = NO;
             
             [[CCDirector sharedDirector].view addGestureRecognizer:tapGr];
