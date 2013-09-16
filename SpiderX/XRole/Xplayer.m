@@ -10,7 +10,6 @@
 #import "Effect.h"
 #import "Config.h"
 #import "Xbullet.h"
-#define ORIGIN_HP 10
 @implementation Xplayer
 +(id) createIn:(CCNode *)parent {
     return [[[self alloc] initPlayer:parent] autorelease];
@@ -41,11 +40,10 @@
         m_active =true;
         m_HP = ORIGIN_HP;
         
-        if( [Config sharedConfig].controlType ==GESTURE_CONTROL){
+        if([Config sharedConfig].controlType == GESTURE_CONTROL)
+        {
             [self schedule:@selector(shoot) interval:0.2];
-            
         }
-        
     }
     return self;
 }

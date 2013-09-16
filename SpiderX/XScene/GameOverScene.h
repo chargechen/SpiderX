@@ -1,7 +1,7 @@
 //
 //  GameOverScene.h
 //  SpiderX
-//
+//  结束界面
 //  Created by Charge on 13-4-9.
 //
 //

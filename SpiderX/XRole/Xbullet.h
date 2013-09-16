@@ -1,7 +1,7 @@
 //
 //  Xbullet.h
 //  SpiderX
-//
+//  子弹
 //  Created by 陈 卓权 on 13-4-17.
 //
 //

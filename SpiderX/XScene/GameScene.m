@@ -21,7 +21,7 @@
 @interface GameScene(){
     CGSize screenSize;
     CGRect m_screenRec;
-    CONTROL_TYPE controlType;
+    CONTROL_TYPE controlType;  //游戏控制方式
 }
 @end
 @implementation GameScene
@@ -36,58 +36,26 @@
     [scene addChild:layer];
     return scene;
 }
+#pragma mark - 初始化
 -(id)init
 {
-    if(self=[super init])
+    if(self = [super init])
     {
-        //初始化游戏数据
-        screenSize = [[CCDirector sharedDirector]winSize];
-        m_screenRec =CGRectMake(0, 0, screenSize.width, screenSize.height+10);
+        [self initGameData];
         
-        enemy_items = [[NSMutableArray alloc]init];
-        enemy_bullet =[[NSMutableArray alloc]init];
+        [self loadGameSources];
         
-        bullets = [[CCArray alloc] initWithCapacity:bulletCount];
-        _totalTime =0;
-        [Config sharedConfig].scoreValue =0;
-        controlType=[Config sharedConfig].controlType;
-        
-        playerlife = 3;
-                
-        [Effect sharedExplosion];
-        [SpiderEnemy sharedEnemy];
-        
-        //语音相关
-//        pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-//        pv_averagePower.frame = CGRectMake(2, 46, 51, 103);
-//        pv_averagePower.tag=2;
-        
-        pv_peakPower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        pv_peakPower.frame = CGRectMake(2, 146, 51, 103);
-        pv_peakPower.tag=3;
-        
-//        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
-        [[CCDirector sharedDirector].view addSubview:pv_peakPower];
-        
-        __unsafe_unretained GameScene *selfCtl = self;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [[SCListener sharedListener] listen];
-            selfCtl.listener = [SCListener sharedListener];
-            [selfCtl schedule:@selector(checkForVoiceBomb:) interval:0.1];
-        });
+        [self initSoundListener];
         
         self.isAccelerometerEnabled = YES; //允许对重力的感应
-         hp_Power =[[PDColoredProgressView alloc] initWithProgressViewStyle: UIProgressViewStyleDefault];
-        hp_Power.tag = 4;
-        [hp_Power setTintColor:[UIColor greenColor]];
-        [[CCDirector sharedDirector].view addSubview:hp_Power];
+        
         [self initPlayer];
         
-        if(controlType==2){ //JoystickMode
+        if(controlType == 2){ //JoystickMode
             [self addFireButton];
             [self addJoystick];
         }
-     
+        
         [self addTouchDelegate:controlType];
         
         [self schedule:@selector(addEnemyToGameLayer) interval:1]; //每隔1秒生成1个敌人
@@ -95,66 +63,96 @@
         [self initRocks];
         [self initBackground];
         
-        //游戏里提示的label
-        CCLabelTTF *yourlife = [CCLabelTTF labelWithString:@"YOUR LIVES:" fontName:@"Marker Felt" fontSize:18];
-        CCLabelTTF *yourScore = [CCLabelTTF labelWithString:@"SCORE:" fontName:@"Marker Felt" fontSize:18];
-        
-        lifeLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",playerlife] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
-        scoreLable = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
-        [lifeLabel setPosition:ccp(screenSize.width-lifeLabel.contentSize.width,screenSize.height-lifeLabel.contentSize.height/2)];
-        [scoreLable setPosition:ccp(yourScore.contentSize.width+marginLeft,screenSize.height-scoreLable.contentSize.height/2)];
-        [yourScore setPosition:ccp(yourScore.contentSize.width/2,screenSize.height-yourScore.contentSize.height/2+2)];
-        [yourlife setPosition:ccp(screenSize.width-yourlife.contentSize.width/2-lifeLabel.contentSize.width-marginLeft,screenSize.height-yourlife.contentSize.height/2+2)];
-
-        [self addChild:scoreLable z:-1];
-        [self addChild:lifeLabel z:40];
-        [self addChild:yourlife z:40];
-        [self addChild:yourScore z:40];
-//        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"Cyber Advance.mp3" loop:YES];   //背景音乐开启后声音录入失效
+        //        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"Cyber Advance.mp3" loop:YES];   //背景音乐开启后声音录入失效
     }
     return self;
 }
-#pragma mark
-#pragma mark addJoystick
--(void) addFireButton
-{    
-	fireButton = [SneakyButton button];
-	fireButton.isHoldable = YES;
-	
-	SneakyButtonSkinnedBase* skinFireButton = [SneakyButtonSkinnedBase skinnedButton];
-	skinFireButton.defaultSprite = [CCSprite spriteWithFile:@"bullet.png"];
-	skinFireButton.pressSprite = [CCSprite spriteWithFile:@"e_bullet.png"];
-    skinFireButton.pressSprite.rotation =180;
-    skinFireButton.pressSprite.scaleY=1.5;
-	skinFireButton.button = fireButton;
-    
-    skinFireButton.position = CGPointMake(screenSize.width-30-skinFireButton.contentSize.width/2, screenSize.height-80);
-    [self addChild:skinFireButton];
-}
--(void) addJoystick
+
+//初始化游戏数据
+-(void)initGameData
 {
-	float stickRadius = 330;
+    screenSize = [[CCDirector sharedDirector]winSize];
+    m_screenRec =CGRectMake(0, 0, screenSize.width, screenSize.height+10);
     
-	joystick = [SneakyJoystick joystickWithRect:CGRectMake(0, 0, stickRadius, stickRadius)];
-	joystick.autoCenter = YES;
-	
-	// Now with fewer directions
-	joystick.isDPad = YES;
-	joystick.numberOfDirections = 8;
-	
-	SneakyJoystickSkinnedBase* skinStick = [SneakyJoystickSkinnedBase skinnedJoystick];
-	skinStick.backgroundSprite = [CCSprite spriteWithFile:@"stone1.png"];
-    skinStick.backgroundSprite.scale =0.8f;
-	skinStick.backgroundSprite.color = ccMAGENTA;
-	skinStick.thumbSprite = [CCSprite spriteWithFile:@"ship.png"];
-//	skinStick.thumbSprite.scale = 0.6f;
-    skinStick.position = CGPointMake(skinStick.contentSize.width/2+30, screenSize.height-50);
-	skinStick.joystick = joystick;
-	[self addChild:skinStick];
+    enemy_items = [[NSMutableArray alloc]init];
+    enemy_bullet =[[NSMutableArray alloc]init];
+    
+    bullets = [[CCArray alloc] initWithCapacity:bulletCount];
+    _totalTime =0;
+    [Config sharedConfig].scoreValue =0;
+    controlType=[Config sharedConfig].controlType;
+    
+    playerlife = 3;
 }
 
-#pragma mark
-#pragma mark background
+-(void)initGameComponent
+{
+    //游戏里提示的label
+    CCLabelTTF *yourlife = [CCLabelTTF labelWithString:@"YOUR LIVES:" fontName:@"Marker Felt" fontSize:18];
+    CCLabelTTF *yourScore = [CCLabelTTF labelWithString:@"SCORE:" fontName:@"Marker Felt" fontSize:18];
+    
+    lifeLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",playerlife] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
+    scoreLable = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
+    [lifeLabel setPosition:ccp(screenSize.width-lifeLabel.contentSize.width,screenSize.height-lifeLabel.contentSize.height/2)];
+    [scoreLable setPosition:ccp(yourScore.contentSize.width+marginLeft,screenSize.height-scoreLable.contentSize.height/2)];
+    [yourScore setPosition:ccp(yourScore.contentSize.width/2,screenSize.height-yourScore.contentSize.height/2+2)];
+    [yourlife setPosition:ccp(screenSize.width-yourlife.contentSize.width/2-lifeLabel.contentSize.width-marginLeft,screenSize.height-yourlife.contentSize.height/2+2)];
+    
+    [self addChild:scoreLable z:-1];
+    [self addChild:lifeLabel z:40];
+    [self addChild:yourlife z:40];
+    [self addChild:yourScore z:40];
+}
+
+//载入资源
+-(void)loadGameSources
+{
+    [Effect sharedExplosion];
+    [SpiderEnemy sharedEnemy];
+}
+
+//初始化声音监听
+-(void)initSoundListener
+{
+    //语音相关
+    //        pv_averagePower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+    //        pv_averagePower.frame = CGRectMake(2, 46, 51, 103);
+    //        pv_averagePower.tag=2;
+    
+    pv_peakPower = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+    pv_peakPower.frame = CGRectMake(2, 146, 51, 103);
+    pv_peakPower.tag=3;
+    
+    //        [[CCDirector sharedDirector].view addSubview:pv_averagePower];
+    [[CCDirector sharedDirector].view addSubview:pv_peakPower];
+    
+    __unsafe_unretained GameScene *selfCtl = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[SCListener sharedListener] listen];
+        selfCtl.listener = [SCListener sharedListener];
+        [selfCtl schedule:@selector(checkForVoiceBomb:) interval:0.1];
+    });
+    
+}
+
+-(void) initPlayer{
+    if(!hp_Power)
+    {
+        hp_Power =[[PDColoredProgressView alloc] initWithProgressViewStyle: UIProgressViewStyleDefault];
+        hp_Power.tag = 4;
+        [hp_Power setTintColor:[UIColor greenColor]];
+        [[CCDirector sharedDirector].view addSubview:hp_Power];
+    }
+    
+    player =[Xplayer createIn:self];
+    CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
+    CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
+    [player runAction:[CCSequence actions:bl, call,nil]];
+    
+    hp_Power.frame =CGRectMake((screenSize.width-player.contentSize.width*0.7)/2, screenSize.height-player.contentSize.height-8,player.contentSize.width*0.7, 5);
+    hp_Power.progress =(float)[player getHp] / ORIGIN_HP;
+}
+
 // 采用两张图循环加载来实现地图的无限滚动
 -(void)initBackground
 {
@@ -168,7 +166,7 @@
     
     if ([UIScreen instancesRespondToSelector:@selector(scale)])  //todo tmx文件自适应高清屏
     {
-        if ([[UIScreen mainScreen] scale]>1.0) 
+        if ([[UIScreen mainScreen] scale]>1.0)
         {
             m_backTileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"level01-hd.tmx"];
         } else
@@ -183,20 +181,20 @@
     [self addChild:m_backTileMap z:-9];
     // Tile map
     m_backTileMapHeight = m_backTileMap.mapSize.height *m_backTileMap.tileSize.height;
-
+    
     m_backSkyHeight -= 48;
     m_backTileMapHeight -= 200;
     [m_backSky runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-48)]];
     [m_backTileMap runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-200)]];
     
-    [self schedule:@selector(movingBackground) interval:3];    
+    [self schedule:@selector(movingBackground) interval:3];
 }
 // 添加点浮动的图层使背景看起来更生动
 -(void)movingBackground
 {
     [m_backSky runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-48)]];
-    [m_backTileMap runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-200)]];    
-
+    [m_backTileMap runAction:[CCMoveBy actionWithDuration:3 position:ccp(0,-200)]];
+    
     m_backSkyHeight -= 48;
     m_backTileMapHeight -= 200;
     
@@ -208,7 +206,7 @@
             m_backSkyRe =[CCSprite spriteWithFile:@"bg01.jpg"];
             [m_backSkyRe setAnchorPoint:ccp(0,0)];
             [self addChild:m_backSkyRe z:-10];
-            [m_backSkyRe setPosition:ccp(0,screenSize.height)];            
+            [m_backSkyRe setPosition:ccp(0,screenSize.height)];
             m_isBackSkyReload = true;
         }
         // 第二张图紧接着第一张图滚动
@@ -219,7 +217,7 @@
     if (m_backSkyHeight <= 0) {
         m_backSkyHeight = m_backSky.contentSize.height;
         // 移除第一张的精灵
-        [self removeChild:m_backSky cleanup:true];        
+        [self removeChild:m_backSky cleanup:true];
         // 指向第二张图的精灵
         m_backSky = m_backSkyRe;
         m_backSkyRe = nil;
@@ -246,137 +244,7 @@
     }
 }
 
-#pragma mark
-#pragma mark player
--(void) initPlayer{
-    player =[Xplayer createIn:self];
-    CCCallFuncN *call = [CCCallFuncN actionWithTarget:self selector:@selector(startScheduleForCollision)];
-    CCBlink *bl = [CCBlink actionWithDuration:2 blinks:5];
-    [player runAction:[CCSequence actions:bl, call,nil]];
-    
-    hp_Power.frame =CGRectMake((screenSize.width-player.contentSize.width*0.7)/2, screenSize.height-player.contentSize.height-8,player.contentSize.width*0.7, 5);
-    hp_Power.progress =[player getHp];
-}
-
-#pragma mark
-#pragma mark 检测声音大于阈值则发起大招
--(void) checkForVoiceBomb:(ccTime)delta
-{
-    AudioQueueLevelMeterState *levels = [listener levels];
-    
-    Float32 peak = levels[0].mPeakPower;
-    
-//    Float32 average = levels[0].mAveragePower;
-    
-    if (![listener isListening])
-        
-        return; 
-    
-//    pv_averagePower.progress=average;
-    
-    pv_peakPower.progress=peak;
-    if(peak>=MAX_VOICE){
-        for(int i =0,len=[rocks count];i<len;i++)
-        {
-            XRock *curRock =[rocks objectAtIndex:i];
-            if ([curRock numberOfRunningActions] == 0)
-            {
-                continue;
-            }
-            CCParticleSystem *emitter_=[CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
-            [self addChild:emitter_ z:10];
-            
-            
-            Effect *effect = [Effect create];
-            [effect explode:self at:curRock.position];
-            [self removeRock:curRock];
-        }
-    }
-
-}
-
-#pragma mark rock
--(void) initRocks
-{
-    XRock* tempRock = [XRock create];
-    float imageWidth = [tempRock texture].contentSize.width;
-    int numRocks = screenSize.width / imageWidth;
-
-    rocks = [[CCArray alloc] initWithCapacity:numRocks];
-    for (int i = 0; i < numRocks; i++)
-    {
-        XRock *rock = [XRock create];
-        [self addChild:rock z:0 tag:2];
-        [rocks addObject:rock];
-    }
-    [self resetRocks];
-    impactDistanceSquared = imageWidth/2 * imageWidth/2;
-}
-
--(void) resetRocks
-{
-    XRock* tempRock = [rocks lastObject];
-    CGSize size = [tempRock texture].contentSize;
-    int numRocks = [rocks count];
-    for (int i = 0; i < numRocks; i++)
-    {
-        XRock *rock = [rocks objectAtIndex:i];
-        rock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height+size.height);
-        [rock stopAllActions];
-    }
-    [self unschedule:@selector(rocksUpdate:)];
-    [self schedule:@selector(rocksUpdate:) interval:0.7f];
-    numRocksMoved = 0;
-    rockMoveDuration = 1.0f;
-}
-
--(void) rocksUpdate:(ccTime)delta
-{
-    for (int i = 0; i < 10; i++)
-    {
-        int randomRockIndex = CCRANDOM_0_1() * [rocks count];
-        XRock* rock = [rocks objectAtIndex:randomRockIndex];
-        
-        if ([rock numberOfRunningActions] == 0)
-        {
-            
-            [self runRockMoveSequence:rock];
-            break;
-        }
-    }
-}
-
--(void) runRockMoveSequence:(XRock*)rock {
-    
-    numRocksMoved++;
-    if (numRocksMoved % 4 == 0 && rockMoveDuration > 2.0f) {
-        rockMoveDuration -= 0.1f;
-    }
-
-// TODO 降低难度吧？
-    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
-    -[rock texture].contentSize.height);
-//    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
-
-    CCMoveTo* move = [CCMoveTo actionWithDuration:rockMoveDuration
-                                         position:belowScreenPosition];
-    CCCallFuncN* callDidDrop = [CCCallFuncN actionWithTarget:self selector:@selector(rockDidDrop:)];
-    CCSequence* sequence = [CCSequence actions:move, callDidDrop, nil];
-    [rock runAction:sequence];
-}
-
--(void) rockDidDrop:(id)sender
-{
-    NSAssert([sender isKindOfClass:[XRock class]], @"sender is not a CCSprite!");
-    XRock* rock = (XRock*)sender;
-    // move the rock back up outside the top of the screen
-    CGPoint pos = rock.position;
-    pos.y = screenSize.height + [rock texture].contentSize.height;
-    rock.position = pos;
-}
-#pragma mark
-#pragma mark touch Event
-
+#pragma mark - 游戏控制方式
 -(void)addTouchDelegate:(CONTROL_TYPE)type
 {
     switch (type) {
@@ -392,6 +260,7 @@
             break;
     }
 }
+
 -(void)removeTouchDelegate:(CONTROL_TYPE)type
 {
     switch (type) {
@@ -412,6 +281,7 @@
 {
     return YES;
 }
+
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     CGPoint location = [self convertTouchToNodeSpace:[touches anyObject]];
@@ -424,7 +294,7 @@
     }
     
     [self shoot:angle];
-
+    
 }
 -(void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
 {
@@ -438,214 +308,10 @@
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
-
-}
-
-#pragma mark
-- (void) pointTo:(float) angleInRadians
-{
-	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
-}
-- (void) shoot:(float) angleInRadians
-{
-    CGPoint center = player.position;
-	
-	CGPoint initialPoint = ccp(center.x + sinf(angleInRadians)*50.0f,
-							   center.y + cosf(angleInRadians)*50.0f);
-	CGPoint endPoint = ccp(center.x + sinf(angleInRadians)*600.0f,
-						   center.y + cosf(angleInRadians)*600.0f);
-	
-	Xbullet* bullet = [Xbullet create];
-	bullet.position = initialPoint;
-	[self addChild:bullet];
-	[bullets addObject:bullet];
-	
-	CCActionInterval* action = [CCSequence actions:
-								[CCMoveTo actionWithDuration:1.0f position:endPoint],
-								[CCCallFuncN actionWithTarget:self selector:@selector(removeBullet:)],
-								nil];
-	[bullet runAction:action];
-    bullet.rotation =CC_RADIANS_TO_DEGREES(angleInRadians);
-    [self pointTo:angleInRadians];
-}
-
--(void) removeBullet:(Xbullet*) bullet
-{
-	[bullets removeObject:bullet];
-    [bullet destroy];
-}
-
-- (void) removeRock:(XRock*) rock
-{
-    int removeIndex=[rocks indexOfObject:rock];
-	[rocks removeObject:rock];
-    [rock destroy];
-    XRock *tempRock =[XRock create];
-    CGSize size = [tempRock texture].contentSize;
-
-    [self addChild:tempRock z:0 tag:2];
-    tempRock.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height+size.height);
-
-//    [rocks addObject:tempRock];
-    [rocks insertObject:tempRock atIndex:removeIndex];
-}
-
-#pragma mark
--(bool)collide:(UnitSprite*)a and:(UnitSprite*)b
-{
-    if(!a || !b)
-    {
-        return false;
-    }
-    CGRect aRect = [a collideRect];
-    CGRect bRect = [b collideRect];
-   if (CGRectIntersectsRect(aRect,bRect)) {
-        return true;
-    }
-    return false;
-}
-
--(void)checkIsCollide
-{
-    for(SpiderEnemy* enemy in enemy_items)
-    {
-        if([self collide:enemy and:player]){
-            if (player) {
-                [enemy destroy];
-                [enemy_items removeObject:enemy];
-                [player hurt];
-                break;
-            }
-        }
-        if (!CGRectIntersectsRect(m_screenRec,[enemy boundingBox])) {
-            [enemy destroy];
-            [enemy_items removeObject:enemy];
-            break;
-        }
-    }
     
-    Xbullet* bulletToRemove = nil;
-    XRock* rockToRemove = nil;
-//    SpiderEnemy* enemyToRemove =nil;
-    for(Xbullet* bullet in bullets)
-    {
-        for(XRock* rock in rocks)
-        {
-            if([self collide:bullet and:rock]){
-                bulletToRemove = bullet;
-                rockToRemove = rock;
-                break;
-            }
-        }
-        if(nil != rockToRemove)
-        {
-            break;
-        }
-        for(SpiderEnemy* enemy in enemy_items)
-        {
-                if([self collide:enemy and:bullet]){
-                    bulletToRemove = bullet;
-//                    enemyToRemove = enemy;
-                    [enemy hurt];
-                    break;
-                }
-         }
-         if(nil != rockToRemove)
-         {
-            break;
-         }
-        
-    }
-    if(nil != bulletToRemove)
-    {
-        if(rockToRemove!=nil){
-            [self removeRock:rockToRemove];
-            [Config sharedConfig].scoreValue +=  2;//加分
-        }
-//        if(enemyToRemove!=nil){
-//            [enemyToRemove destroy];
-//            [enemy_items removeObject:enemyToRemove];
-//        }
-        if(bulletToRemove!=nil){
-            [self removeBullet:bulletToRemove];
-        }
-    }
-    for(Xbullet *e_bullet in enemy_bullet)
-    {
-        if([self collide:e_bullet and:player]){
-            if (player) {
-                [e_bullet destroy];
-                [enemy_bullet removeObject:e_bullet];
-                [player hurt];
-                break;
-            }
-            if (!CGRectIntersectsRect(m_screenRec,[e_bullet boundingBox])) {
-                [e_bullet destroy];
-                [enemy_bullet removeObject:e_bullet];
-                break;
-            }
-        }
-    }
 }
 
--(void) startScheduleForCollision{
-    [self schedule:@selector(checkForCollision) interval:1/60];
-}
-
--(void) checkForCollision
-{
-    for(XRock *rock in rocks)
-    {
-        if ([rock numberOfRunningActions] == 0)
-        {
-            continue;   //没在动的直接忽略
-        }
-        if([self collide:rock and:player]){
-            if (player) {
-                [player hurt];
-                [self removeRock:rock];
-                break;
-            }
-        }
-        if (rock.position.y<0 &&!CGRectIntersectsRect(m_screenRec, [rock boundingBox])) {
-            [self removeRock:rock];
-            break;
-        }
-    }
-}
-#pragma mark
-#pragma mark Button Event
-
--(void)restartGame:(id)sender
-{
-    [self removeChildByTag:59 cleanup:YES];  //YOU LOSE
-    [self removeChildByTag:60 cleanup:YES]; // BUTTON
-    playerlife = 3 ;
-    [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
-    [self resetRocks];
-    [self resetGame];
-}
-
--(void) gameOver
-{
-    [[[CCDirector sharedDirector].view viewWithTag:4] removeFromSuperview];
-    [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
-//    [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
-    CCScene * scene = [GameOverScene scene];
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
-}
-#pragma mark
--(void)resetGame{
-//    _totalTime = 0;
-//    score= 0;
-    [self initPlayer];
-    
-    hp_Power.hidden =NO;
-    [self addTouchDelegate:controlType];
-//    [scoreLable setString:@"0"];
-    [self scheduleUpdate];
-}
-#pragma mark
+//重力加速度感应
 -(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
 {
     float deceleration = 0.4f;
@@ -672,9 +338,269 @@
     }
 }
 
-#pragma mark
-#pragma mark Enemy
--(void) addEnemyToGameLayer
+-(void)pointTo:(float)angleInRadians
+{
+	player.rotation = CC_RADIANS_TO_DEGREES(angleInRadians);
+}
+
+- (void)shoot:(float)angleInRadians
+{
+    CGPoint center = player.position;
+	
+	CGPoint initialPoint = ccp(center.x + sinf(angleInRadians)*50.0f,
+							   center.y + cosf(angleInRadians)*50.0f);
+	CGPoint endPoint = ccp(center.x + sinf(angleInRadians)*600.0f,
+						   center.y + cosf(angleInRadians)*600.0f);
+	
+	Xbullet* bullet = [Xbullet create];
+	bullet.position = initialPoint;
+	[self addChild:bullet];
+	[bullets addObject:bullet];
+	
+	CCActionInterval* action = [CCSequence actions:
+								[CCMoveTo actionWithDuration:1.0f position:endPoint],
+								[CCCallFuncN actionWithTarget:self selector:@selector(removeBullet:)],
+								nil];
+	[bullet runAction:action];
+    bullet.rotation =CC_RADIANS_TO_DEGREES(angleInRadians);
+    [self pointTo:angleInRadians];
+}
+
+-(void)removeBullet:(Xbullet *)bullet
+{
+	[bullets removeObject:bullet];
+    [bullet destroy];
+}
+
+#pragma mark - 摇杆控制器相关
+-(void)addFireButton
+{
+	fireButton = [SneakyButton button];
+	fireButton.isHoldable = YES;
+	
+	SneakyButtonSkinnedBase* skinFireButton = [SneakyButtonSkinnedBase skinnedButton];
+	skinFireButton.defaultSprite = [CCSprite spriteWithFile:@"bullet.png"];
+	skinFireButton.pressSprite = [CCSprite spriteWithFile:@"e_bullet.png"];
+    skinFireButton.pressSprite.rotation =180;
+    skinFireButton.pressSprite.scaleY=1.5;
+	skinFireButton.button = fireButton;
+    
+    skinFireButton.position = CGPointMake(screenSize.width-30-skinFireButton.contentSize.width/2, screenSize.height-80);
+    [self addChild:skinFireButton];
+}
+-(void)addJoystick
+{
+	float stickRadius = 330;
+    
+	joystick = [SneakyJoystick joystickWithRect:CGRectMake(0, 0, stickRadius, stickRadius)];
+	joystick.autoCenter = YES;
+	
+	// Now with fewer directions
+	joystick.isDPad = YES;
+	joystick.numberOfDirections = 8;
+	
+	SneakyJoystickSkinnedBase* skinStick = [SneakyJoystickSkinnedBase skinnedJoystick];
+	skinStick.backgroundSprite = [CCSprite spriteWithFile:@"stone1.png"];
+    skinStick.backgroundSprite.scale =0.8f;
+	skinStick.backgroundSprite.color = ccMAGENTA;
+	skinStick.thumbSprite = [CCSprite spriteWithFile:@"ship.png"];
+    //	skinStick.thumbSprite.scale = 0.6f;
+    skinStick.position = CGPointMake(skinStick.contentSize.width/2+30, screenSize.height-50);
+	skinStick.joystick = joystick;
+	[self addChild:skinStick];
+}
+
+#pragma mark - 碰撞监测
+-(bool)collide:(UnitSprite*)a and:(UnitSprite*)b
+{
+    if(!a || !b)
+    {
+        return false;
+    }
+    CGRect aRect = [a collideRect];
+    CGRect bRect = [b collideRect];
+    if (CGRectIntersectsRect(aRect,bRect)) {
+        return true;
+    }
+    return false;
+}
+
+-(void)checkIsCollide
+{
+    for(SpiderEnemy* enemy in enemy_items)
+    {
+        if([self collide:enemy and:player]){
+            if (player) {
+                [enemy destroy];
+                [enemy_items removeObject:enemy];
+                [player hurt];
+                break;
+            }
+        }
+        if (!CGRectIntersectsRect(m_screenRec,[enemy boundingBox])) {
+            [enemy destroy];
+            [enemy_items removeObject:enemy];
+            break;
+        }
+    }
+    
+    Xbullet* bulletToRemove = nil;
+    XRock* rockToRemove = nil;
+
+    for(Xbullet* bullet in bullets)
+    {
+        for(XRock* rock in rocks)
+        {
+            if([self collide:bullet and:rock]){
+                bulletToRemove = bullet;
+                rockToRemove = rock;
+                break;
+            }
+        }
+        if(nil != rockToRemove)
+        {
+            break;
+        }
+        for(SpiderEnemy* enemy in enemy_items)
+        {
+            if([self collide:enemy and:bullet]){
+                bulletToRemove = bullet;
+                [enemy hurt];
+                break;
+            }
+        }
+        if(nil != rockToRemove)
+        {
+            break;
+        }
+        
+    }
+    if(nil != bulletToRemove)
+    {
+        if(rockToRemove!=nil){
+            [self removeRock:rockToRemove];
+            [Config sharedConfig].scoreValue +=  2;//加分
+        }
+    
+        if(bulletToRemove!=nil){
+            [self removeBullet:bulletToRemove];
+        }
+    }
+    for(Xbullet *e_bullet in enemy_bullet)
+    {
+        if([self collide:e_bullet and:player]){
+            if (player) {
+                [e_bullet destroy];
+                [enemy_bullet removeObject:e_bullet];
+                [player hurt];
+                break;
+            }
+            if (!CGRectIntersectsRect(m_screenRec,[e_bullet boundingBox])) {
+                [e_bullet destroy];
+                [enemy_bullet removeObject:e_bullet];
+                break;
+            }
+        }
+    }
+}
+
+-(void)startScheduleForCollision
+{
+    [self schedule:@selector(checkForCollision) interval:1/60];
+}
+
+-(void)checkForCollision
+{
+    for(XRock *rock in rocks)
+    {
+        if ([rock numberOfRunningActions] == 0)
+        {
+            continue;   //没在动的直接忽略
+        }
+        if([self collide:rock and:player]){
+            if (player) {
+                [player hurt];
+                [self removeRock:rock];
+                break;
+            }
+        }
+        if (rock.position.y<0 &&!CGRectIntersectsRect(m_screenRec, [rock boundingBox])) {
+            [self removeRock:rock];
+            break;
+        }
+    }
+}
+
+
+#pragma mark - 检测声音大于阈值则发起大招
+-(void) checkForVoiceBomb:(ccTime)delta
+{
+    AudioQueueLevelMeterState *levels = [listener levels];
+    
+    Float32 peak = levels[0].mPeakPower;
+    
+    //    Float32 average = levels[0].mAveragePower;
+    
+    if (![listener isListening])
+        
+        return;
+    
+    //    pv_averagePower.progress=average;
+    
+    pv_peakPower.progress=peak;
+    if(peak>=MAX_VOICE)
+    {
+        [self destroyAllRocks];
+    }
+    
+}
+
+#pragma mark - 游戏流程
+-(void)restartGame:(id)sender
+{
+    [self removeChildByTag:59 cleanup:YES];  //YOU LOSE
+    [self removeChildByTag:60 cleanup:YES]; // BUTTON
+    playerlife = 3 ;
+    [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
+    [self resetRocks];
+    [self resetGame];
+}
+
+-(void)gameOver
+{
+    [[[CCDirector sharedDirector].view viewWithTag:4] removeFromSuperview];
+    [[[CCDirector sharedDirector].view viewWithTag:3] removeFromSuperview];
+    //    [[[CCDirector sharedDirector].view viewWithTag:2] removeFromSuperview];
+    CCScene * scene = [GameOverScene scene];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.2 scene:scene]];
+}
+
+-(void)resetGame{
+    //    _totalTime = 0;
+    //    score= 0;
+    [self initPlayer];
+    
+    hp_Power.hidden =NO;
+    [self addTouchDelegate:controlType];
+    //    [scoreLable setString:@"0"];
+    [self scheduleUpdate];
+}
+
+-(void) dealloc
+{
+    [super dealloc];
+    [enemy_items release];
+    [enemy_bullet release];
+    [bullets release];
+    [rocks release];
+    enemy_items =nil;
+    enemy_bullet =nil;
+    bullets =nil;
+    rocks = nil;
+}
+
+#pragma mark - Enemy 敌人相关
+-(void)addEnemyToGameLayer
 {
     int m_index = arc4random()%6;
     SpiderEnemy * enemy = [SpiderEnemy create:EnemyUnit[m_index]];
@@ -683,7 +609,7 @@
     CGSize eSize = enemy.contentSize;
     [enemy setPosition:enemyPos];
     
-    CGPoint offset; 
+    CGPoint offset;
     CCAction *tempAction;
     CCMoveBy *a0;
     CCMoveBy *a1;
@@ -739,13 +665,13 @@
 }
 - (void) update:(ccTime)delta
 {
-//    _totalTime += delta;   //时间流逝也能得分
-//    int currentTime = (int)_totalTime;
-//    int preScore= [Config sharedConfig].scoreValue;
-//    if(preScore < currentTime){
-//        [[Config sharedConfig] setScoreValue:currentTime];
-        [scoreLable setString:[NSString stringWithFormat:@"%i",[Config sharedConfig].scoreValue]];
-//    }
+    //    _totalTime += delta;   //时间流逝也能得分
+    //    int currentTime = (int)_totalTime;
+    //    int preScore= [Config sharedConfig].scoreValue;
+    //    if(preScore < currentTime){
+    //        [[Config sharedConfig] setScoreValue:currentTime];
+    [scoreLable setString:[NSString stringWithFormat:@"%i",[Config sharedConfig].scoreValue]];
+    //    }
     
     if(controlType==GRAVITY_CONTROL){
         CGPoint pos = player.position;
@@ -797,7 +723,7 @@
         }
         
         // Moving the ship with the thumbstick.
-
+        
         
         CGPoint velocity = ccpMult(joystick.velocity,300);
         if (!(velocity.x == 0 && velocity.y == 0))
@@ -817,12 +743,12 @@
             
             hp_Power.center = CGPointMake(pos.x, screenSize.height-player.position.y- player.contentSize.height/2-8);
         }
-
-    
+        
+        
     }
     [self checkIsCollide];
     [self removeSpriteUnit:delta];
-
+    
 }
 
 -(void)removeSpriteUnit:(float) dt
@@ -838,50 +764,148 @@
             break;
         }
     }
-if(player){
-    [player update:dt];
-    hp_Power.progress =[player getHp]*0.1;
-    if(![player isActive])
-    {
-        [self unschedule:@selector(checkForCollision)];
-        [player destroy];
-        hp_Power.hidden =YES;
-        player =nil;
-        playerlife-=1;
-        [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
-        [self unscheduleUpdate];
-        if(playerlife<=0){  //游戏结束
-            [self removeTouchDelegate:controlType];
+    if(player){
+        [player update:dt];
+        hp_Power.progress =(float)[player getHp] / ORIGIN_HP;
+        if(![player isActive])
+        {
+            [self unschedule:@selector(checkForCollision)];
+            [player destroy];
+            hp_Power.hidden =YES;
+            player =nil;
+            playerlife-=1;
+            [lifeLabel setString:[NSString stringWithFormat:@"%i",playerlife]];
+            [self unscheduleUpdate];
+            if(playerlife<=0){  //游戏结束
+                [self removeTouchDelegate:controlType];
+                
+                [self unschedule:@selector(rocksUpdate:)];
+                CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"THE END.." fontName:@"Marker Felt" fontSize:40];
+                endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
+                [self addChild:endingText z:30 tag:59];
+                
+                CCDelayTime *delayTime =[CCDelayTime actionWithDuration:1];
+                CCCallFuncN* callFunc = [CCCallFuncN actionWithTarget:self selector:@selector(gameOver)];
+                CCSequence* sequence = [CCSequence actions:delayTime,callFunc, nil];
+                [self runAction:sequence];
+                
+            }else{
+                [self removeTouchDelegate:controlType];
+                [self performSelector:@selector(resetGame) withObject:nil afterDelay:0.5];
+            }
             
-            [self unschedule:@selector(rocksUpdate:)];
-            CCLabelTTF* endingText = [CCLabelTTF labelWithString:@"THE END.." fontName:@"Marker Felt" fontSize:40];
-            endingText.position = CGPointMake(screenSize.width/2,screenSize.height/2);
-            [self addChild:endingText z:30 tag:59];
-            
-            CCDelayTime *delayTime =[CCDelayTime actionWithDuration:1];
-            CCCallFuncN* callFunc = [CCCallFuncN actionWithTarget:self selector:@selector(gameOver)];
-            CCSequence* sequence = [CCSequence actions:delayTime,callFunc, nil];
-            [self runAction:sequence];
-            
-        }else{
-            [self removeTouchDelegate:controlType];
-            [self performSelector:@selector(resetGame) withObject:nil afterDelay:0.5];
         }
-        
     }
 }
-}
--(void) dealloc
+
+#pragma mark - rock 陨石相关
+-(void) initRocks
 {
-    [super dealloc];
-    [enemy_items release];
-    [enemy_bullet release];
-    [bullets release];
-    [rocks release];
-    enemy_items =nil;
-    enemy_bullet =nil;
-    bullets =nil;
-    rocks = nil;
+    XRock* tempRock = [XRock create];
+    float imageWidth = [tempRock texture].contentSize.width;
+    int numRocks = screenSize.width / imageWidth;
+    
+    rocks = [[CCArray alloc] initWithCapacity:numRocks];
+    for (int i = 0; i < numRocks; i++)
+    {
+        XRock *rock = [XRock create];
+        [self addChild:rock z:0 tag:2];
+        [rocks addObject:rock];
+    }
+    [self resetRocks];
 }
 
+-(void) resetRocks
+{
+    XRock* tempRock = [rocks lastObject];
+    CGSize size = [tempRock texture].contentSize;
+    int numRocks = [rocks count];
+    for (int i = 0; i < numRocks; i++)
+    {
+        XRock *rock = [rocks objectAtIndex:i];
+        rock.position = CGPointMake(size.width*i +size.width*0.5f, screenSize.height+size.height);
+        [rock stopAllActions];
+    }
+    [self unschedule:@selector(rocksUpdate:)];
+    [self schedule:@selector(rocksUpdate:) interval:0.7f];
+    numRocksMoved = 0;
+    rockMoveDuration = 1.0f;
+}
+
+-(void) rocksUpdate:(ccTime)delta
+{
+    for (int i = 0; i < 10; i++)
+    {
+        int randomRockIndex = CCRANDOM_0_1() * [rocks count];
+        XRock* rock = [rocks objectAtIndex:randomRockIndex];
+        
+        if ([rock numberOfRunningActions] == 0)
+        {
+            
+            [self runRockMoveSequence:rock];
+            break;
+        }
+    }
+}
+
+-(void) runRockMoveSequence:(XRock*)rock {
+    
+    numRocksMoved++;
+    if (numRocksMoved % 4 == 0 && rockMoveDuration > 2.0f) {
+        rockMoveDuration -= 0.1f;
+    }
+    
+    // TODO 降低难度吧？
+    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
+                                                                     -[rock texture].contentSize.height);
+    //    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
+    
+    CCMoveTo* move = [CCMoveTo actionWithDuration:rockMoveDuration
+                                         position:belowScreenPosition];
+    CCCallFuncN* callDidDrop = [CCCallFuncN actionWithTarget:self selector:@selector(rockDidDrop:)];
+    CCSequence* sequence = [CCSequence actions:move, callDidDrop, nil];
+    [rock runAction:sequence];
+}
+
+-(void) rockDidDrop:(id)sender
+{
+    NSAssert([sender isKindOfClass:[XRock class]], @"sender is not a CCSprite!");
+    XRock* rock = (XRock*)sender;
+    // move the rock back up outside the top of the screen
+    CGPoint pos = rock.position;
+    pos.y = screenSize.height + [rock texture].contentSize.height;
+    rock.position = pos;
+}
+- (void)removeRock:(XRock*) rock
+{
+    int removeIndex=[rocks indexOfObject:rock];
+	[rocks removeObject:rock];
+    [rock destroy];
+    XRock *tempRock =[XRock create];
+    CGSize size = [tempRock texture].contentSize;
+    
+    [self addChild:tempRock z:0 tag:2];
+    tempRock.position = CGPointMake(size.width*removeIndex +size.width*0.5f, screenSize.height+size.height);
+    
+    //    [rocks addObject:tempRock];
+    [rocks insertObject:tempRock atIndex:removeIndex];
+}
+//大招秒全场
+-(void)destroyAllRocks
+{
+    for(int i =0,len=[rocks count];i<len;i++)
+    {
+        XRock *curRock =[rocks objectAtIndex:i];
+        if ([curRock numberOfRunningActions] == 0)
+        {
+            continue;
+        }
+        CCParticleSystem *emitter_=[CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
+        [self addChild:emitter_ z:10];
+                
+        Effect *effect = [Effect create];
+        [effect explode:self at:curRock.position];
+        [self removeRock:curRock];
+    }
+}
 @end

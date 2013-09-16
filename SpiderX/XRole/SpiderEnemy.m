@@ -29,10 +29,10 @@
 EnemyType EnemyUnit[] = {
     {0,@"E0.png",@"W2.png",1,0,1},
     {1,@"E1.png",@"W2.png",2,0,2},
-    {2,@"E2.png",@"W2.png",4,2,4},
-    {3,@"E3.png",@"W2.png",6,3,6},
-    {4,@"E4.png",@"W2.png",10,2,8},
-    {5,@"E5.png",@"W2.png",15,2,10},
+    {2,@"E2.png",@"W2.png",3,2,4},
+    {3,@"E3.png",@"W2.png",4,3,6},
+    {4,@"E4.png",@"W2.png",5,2,8},
+    {5,@"E5.png",@"W2.png",6,2,10},
 };
 
 +(id) create:(EnemyType) type

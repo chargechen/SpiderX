@@ -1,7 +1,7 @@
 //
 //  SpiderEnemy.h
 //  SpiderX
-//
+//  敌机
 //  Created by 陈 卓权 on 13-4-15.
 //  Copyright 2013年 __MyCompanyName__. All rights reserved.
 //
@@ -17,8 +17,10 @@ typedef struct {
     int moveType;
     int scoreValue;
 }EnemyType;
+
 extern EnemyType EnemyUnit[];
-@interface SpiderEnemy :UnitSprite {
+@interface SpiderEnemy :UnitSprite
+{
 }
 +(void) sharedEnemy;
 +(id)create:(EnemyType)type;

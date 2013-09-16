@@ -16,6 +16,7 @@
 		181B6E9F17118AD200C4D34D /* b01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9C17118AD100C4D34D /* b01@2x.png */; };
 		181B6EA017118AD200C4D34D /* bg01@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9D17118AD100C4D34D /* bg01@2x.jpg */; };
 		181B6EA117118AD200C4D34D /* ship@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9E17118AD100C4D34D /* ship@2x.png */; };
+		188CBE1C17E5BB1600FDF480 /* drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 188CBE1B17E5BB1600FDF480 /* drawing.m */; };
 		1F1467A8171C43690036F08E /* Enemy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F1467A6171C43680036F08E /* Enemy.plist */; };
 		1F1467A9171C43690036F08E /* Enemy.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F1467A7171C43690036F08E /* Enemy.png */; };
 		1F1467C0171D9BCE0036F08E /* bullet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F1467BE171D9BCD0036F08E /* bullet@2x.png */; };
@@ -37,7 +38,6 @@
 		1F146850171FE5D10036F08E /* streak.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F14684F171FE5D10036F08E /* streak.png */; };
 		1F454DA61720322A00353843 /* e_bullet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DA41720322A00353843 /* e_bullet.png */; };
 		1F454DA71720322A00353843 /* e_bullet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DA51720322A00353843 /* e_bullet@2x.png */; };
-		1F454DB11720F22C00353843 /* drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F454DAE1720F22C00353843 /* drawing.m */; };
 		1F454DB21720F22C00353843 /* PDColoredProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F454DB01720F22C00353843 /* PDColoredProgressView.m */; };
 		1F454DB51720FAB000353843 /* stone.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DB31720FAB000353843 /* stone.png */; };
 		1F454DB61720FAB000353843 /* stone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F454DB41720FAB000353843 /* stone@2x.png */; };
@@ -216,6 +216,7 @@
 		181B6E9C17118AD100C4D34D /* b01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "b01@2x.png"; path = "Resources/b01@2x.png"; sourceTree = "<group>"; };
 		181B6E9D17118AD100C4D34D /* bg01@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "bg01@2x.jpg"; path = "Resources/bg01@2x.jpg"; sourceTree = "<group>"; };
 		181B6E9E17118AD100C4D34D /* ship@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ship@2x.png"; path = "Resources/ship@2x.png"; sourceTree = "<group>"; };
+		188CBE1B17E5BB1600FDF480 /* drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = drawing.m; sourceTree = "<group>"; };
 		1F1467A6171C43680036F08E /* Enemy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Enemy.plist; path = Resources/Enemy.plist; sourceTree = "<group>"; };
 		1F1467A7171C43690036F08E /* Enemy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Enemy.png; path = Resources/Enemy.png; sourceTree = "<group>"; };
 		1F1467BE171D9BCD0036F08E /* bullet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bullet@2x.png"; path = "Resources/bullet@2x.png"; sourceTree = "<group>"; };
@@ -247,7 +248,6 @@
 		1F14684F171FE5D10036F08E /* streak.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = streak.png; path = Resources/streak.png; sourceTree = "<group>"; };
 		1F454DA41720322A00353843 /* e_bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = e_bullet.png; path = Resources/e_bullet.png; sourceTree = "<group>"; };
 		1F454DA51720322A00353843 /* e_bullet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "e_bullet@2x.png"; path = "Resources/e_bullet@2x.png"; sourceTree = "<group>"; };
-		1F454DAE1720F22C00353843 /* drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = drawing.m; sourceTree = "<group>"; };
 		1F454DAF1720F22C00353843 /* PDColoredProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDColoredProgressView.h; sourceTree = "<group>"; };
 		1F454DB01720F22C00353843 /* PDColoredProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDColoredProgressView.m; sourceTree = "<group>"; };
 		1F454DB31720FAB000353843 /* stone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stone.png; path = Resources/stone.png; sourceTree = "<group>"; };
@@ -568,10 +568,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1F1467F2171E3BC40036F08E /* XCommon */ = {
+		188CBE1A17E5B7F100FDF480 /* 控制手柄 */ = {
 			isa = PBXGroup;
 			children = (
-				1FE074B0172548E700578897 /* ColoredCircleSprite.h */,
 				1FE074B1172548E700578897 /* ColoredCircleSprite.m */,
 				1FE074A41725483500578897 /* SneakyExtensions.h */,
 				1FE074A51725483500578897 /* SneakyExtensions.m */,
@@ -583,11 +582,20 @@
 				1FE074AB1725483500578897 /* SneakyJoystick.m */,
 				1FE074AC1725483500578897 /* SneakyJoystickSkinnedBase.h */,
 				1FE074AD1725483600578897 /* SneakyJoystickSkinnedBase.m */,
+				1FE074B0172548E700578897 /* ColoredCircleSprite.h */,
+			);
+			name = "控制手柄";
+			sourceTree = "<group>";
+		};
+		1F1467F2171E3BC40036F08E /* XCommon */ = {
+			isa = PBXGroup;
+			children = (
+				188CBE1A17E5B7F100FDF480 /* 控制手柄 */,
 				1F1467F3171E3BC40036F08E /* Config.h */,
 				1F1467F4171E3BC40036F08E /* Config.m */,
 				1F1467F5171E3BC40036F08E /* Effect.h */,
 				1F1467F6171E3BC40036F08E /* Effect.m */,
-				1F454DAE1720F22C00353843 /* drawing.m */,
+				188CBE1B17E5BB1600FDF480 /* drawing.m */,
 				1F454DAF1720F22C00353843 /* PDColoredProgressView.h */,
 				1F454DB01720F22C00353843 /* PDColoredProgressView.m */,
 				1F1467F7171E3BC40036F08E /* SCListener.h */,
@@ -1315,9 +1323,9 @@
 				1F146837171E3BC40036F08E /* GameScene.m in Sources */,
 				1F14683E171EA7380036F08E /* Xbullet.m in Sources */,
 				1F146841171EBE990036F08E /* XRock.m in Sources */,
-				1F454DB11720F22C00353843 /* drawing.m in Sources */,
 				1F454DB21720F22C00353843 /* PDColoredProgressView.m in Sources */,
 				1FE0732B172516D400578897 /* GameStartScene.m in Sources */,
+				188CBE1C17E5BB1600FDF480 /* drawing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1328,7 +1336,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1340,6 +1349,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1349,7 +1359,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
@@ -1359,6 +1370,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

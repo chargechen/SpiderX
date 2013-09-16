@@ -1,7 +1,7 @@
 //
 //  Effect.h
 //  SpiderX
-//
+//  动画效果
 //  Created by Charge on 13-4-9.
 //  Copyright 2013年 __MyCompanyName__. All rights reserved.
 //

@@ -1,13 +1,16 @@
 //
 //  Config.h
 //  SpiderX
-//
+//  全局配置
 //  Created by 陈 卓权 on 13-4-10.
 //
 //
 
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
+
+#define ORIGIN_HP 5
+
 NSMutableArray *enemy_items;
 NSMutableArray *enemy_bullet;
 CCArray *bullets;

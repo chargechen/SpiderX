@@ -1,7 +1,7 @@
 //
 //  GameScene.h
 //  SpiderX
-//
+//  游戏界面
 //  Created by 陈 卓权 on 13-3-24.
 //  Copyright 2013年 __MyCompanyName__. All rights reserved.
 //
@@ -20,19 +20,31 @@
 
 #import "SneakyExtensions.h"
 @interface GameScene : CCLayer {
-    Xplayer *player;
-    
+    //主人公
+    Xplayer *player;                
+    //重力加速度
     CGPoint playerVelocity;
     
-    CCArray* rocks;
+    //陨石
+    CCArray* rocks;                 
+    //陨石运动持续时间
     float rockMoveDuration;
+    //运动的陨石数量
     int numRocksMoved;
-    CCLabelAtlas *scoreLable;
-    CCLabelAtlas *lifeLabel;
-    ccTime _totalTime;
-    int playerlife;
-    float impactDistanceSquared;
     
+    //分数面板
+    CCLabelAtlas *scoreLable;       
+    //生命面板
+    CCLabelAtlas *lifeLabel;
+    
+    
+    //游戏时间
+    ccTime _totalTime;
+    //剩余生命
+    int playerlife;
+
+    
+    //背景地图
     CCSprite * m_backSky;
     float m_backSkyHeight;
     CCSprite *m_backSkyRe;
@@ -41,15 +53,19 @@
     CCTMXTiledMap *m_backTileMapRe;
     bool m_isBackSkyReload;
     bool m_isBackTileReload;
+    
+    //摇杆控制器
     SneakyButton* fireButton;
 	SneakyJoystick* joystick;
     ccTime nextShotTime;
 }
+//声音监听器
 @property (nonatomic,strong) SCListener *listener;
+//音频平均能量
 @property (nonatomic,strong) UIProgressView *pv_averagePower;
-
+//音频最低能量
 @property (nonatomic,strong) UIProgressView *pv_peakPower;
+//生命值槽
 @property (nonatomic,strong) PDColoredProgressView *hp_Power;
 +(id) scene;
--(void) addFireButton;
 @end
