@@ -37,8 +37,9 @@
     //生命面板
     CCLabelAtlas *lifeLabel;
     //combo面板
-    CCLabelAtlas *comboLabel;
-
+//    CCLabelAtlas *comboLabel;
+    CCLabelBMFont *comboLabel;
+    
     CCLabelTTF   *comboText;
     
     //游戏时间

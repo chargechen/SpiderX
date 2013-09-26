@@ -16,6 +16,9 @@
 		181B6E9F17118AD200C4D34D /* b01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9C17118AD100C4D34D /* b01@2x.png */; };
 		181B6EA017118AD200C4D34D /* bg01@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9D17118AD100C4D34D /* bg01@2x.jpg */; };
 		181B6EA117118AD200C4D34D /* ship@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 181B6E9E17118AD100C4D34D /* ship@2x.png */; };
+		188C888D17F46F8A0035F56A /* numbers.png in Resources */ = {isa = PBXBuildFile; fileRef = 188C888C17F46F8A0035F56A /* numbers.png */; };
+		188C889517F48D1C0035F56A /* myfont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 188C889317F48D1C0035F56A /* myfont.fnt */; };
+		188C889617F48D1C0035F56A /* myfont.png in Resources */ = {isa = PBXBuildFile; fileRef = 188C889417F48D1C0035F56A /* myfont.png */; };
 		188CBE1C17E5BB1600FDF480 /* drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 188CBE1B17E5BB1600FDF480 /* drawing.m */; };
 		1F1467A8171C43690036F08E /* Enemy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F1467A6171C43680036F08E /* Enemy.plist */; };
 		1F1467A9171C43690036F08E /* Enemy.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F1467A7171C43690036F08E /* Enemy.png */; };
@@ -216,6 +219,9 @@
 		181B6E9C17118AD100C4D34D /* b01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "b01@2x.png"; path = "Resources/b01@2x.png"; sourceTree = "<group>"; };
 		181B6E9D17118AD100C4D34D /* bg01@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "bg01@2x.jpg"; path = "Resources/bg01@2x.jpg"; sourceTree = "<group>"; };
 		181B6E9E17118AD100C4D34D /* ship@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ship@2x.png"; path = "Resources/ship@2x.png"; sourceTree = "<group>"; };
+		188C888C17F46F8A0035F56A /* numbers.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numbers.png; path = Resources/numbers.png; sourceTree = "<group>"; };
+		188C889317F48D1C0035F56A /* myfont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = myfont.fnt; path = Resources/myfont.fnt; sourceTree = "<group>"; };
+		188C889417F48D1C0035F56A /* myfont.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = myfont.png; path = Resources/myfont.png; sourceTree = "<group>"; };
 		188CBE1B17E5BB1600FDF480 /* drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = drawing.m; sourceTree = "<group>"; };
 		1F1467A6171C43680036F08E /* Enemy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Enemy.plist; path = Resources/Enemy.plist; sourceTree = "<group>"; };
 		1F1467A7171C43690036F08E /* Enemy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Enemy.png; path = Resources/Enemy.png; sourceTree = "<group>"; };
@@ -688,6 +694,9 @@
 			isa = PBXGroup;
 			children = (
 				1F704792172624B80097A83A /* joystick.png */,
+				188C889317F48D1C0035F56A /* myfont.fnt */,
+				188C889417F48D1C0035F56A /* myfont.png */,
+				188C888C17F46F8A0035F56A /* numbers.png */,
 				1F704794172624C80097A83A /* joystick@2x.png */,
 				1FE0732C17251A1500578897 /* gravity.png */,
 				1FE0732D17251A1500578897 /* gravity@2x.png */,
@@ -1195,6 +1204,9 @@
 				1FE0733317251A1500578897 /* manual@2x.png in Resources */,
 				1F704793172624B80097A83A /* joystick.png in Resources */,
 				1F704795172624C80097A83A /* joystick@2x.png in Resources */,
+				188C888D17F46F8A0035F56A /* numbers.png in Resources */,
+				188C889517F48D1C0035F56A /* myfont.fnt in Resources */,
+				188C889617F48D1C0035F56A /* myfont.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

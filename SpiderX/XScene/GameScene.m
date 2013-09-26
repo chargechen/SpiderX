@@ -93,23 +93,25 @@
     //游戏里提示的label
     CCLabelTTF *yourlife = [CCLabelTTF labelWithString:@"YOUR LIVES:" fontName:@"Marker Felt" fontSize:18];
     CCLabelTTF *yourScore = [CCLabelTTF labelWithString:@"SCORE:" fontName:@"Marker Felt" fontSize:18];
-    comboText = [CCLabelTTF labelWithString:@"COMBO！  +" fontName:@"Marker Felt" fontSize:18];
-    comboText.color = ccc3(225, 225, 0);
+    comboText = [CCLabelTTF labelWithString:@"COMBO！" fontName:@"Marker Felt" fontSize:20];
+    comboText.color = ccc3(255, 255, 255);
     
     lifeLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",playerlife] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
     scoreLable = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"fps_images.png" itemWidth:12 itemHeight:32 startCharMap:'.'];
-    comboLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"numbers.png" itemWidth:25 itemHeight:27 startCharMap:'1'];
+    
+   comboLabel = [CCLabelBMFont labelWithString:@"" fntFile:@"myfont.fnt"];
+//    comboLabel = [CCLabelAtlas labelWithString:[NSString stringWithFormat:@"%i",0] charMapFile:@"numbers.png" itemWidth:25 itemHeight:27 startCharMap:'1'];
     
     
     [lifeLabel setPosition:ccp(screenSize.width-lifeLabel.contentSize.width,screenSize.height-lifeLabel.contentSize.height/2)];
     [scoreLable setPosition:ccp(yourScore.contentSize.width+marginLeft,screenSize.height-scoreLable.contentSize.height/2)];
-    [comboLabel setPosition:ccp(screenSize.width-comboLabel.contentSize.width-20,screenSize.height/2-comboLabel.contentSize.height/2 + 115)];
+//    [comboLabel setPosition:ccp(screenSize.width/2 +comboText.contentSize.width+15,screenSize.height/2-comboLabel.contentSize.height/2 + 115)];
     
     
     [yourScore setPosition:ccp(yourScore.contentSize.width/2,screenSize.height-yourScore.contentSize.height/2+2)];
     [yourlife setPosition:ccp(screenSize.width-yourlife.contentSize.width/2-lifeLabel.contentSize.width-marginLeft,screenSize.height-yourlife.contentSize.height/2+2)];
     
-    [comboText setPosition:ccp(screenSize.width-comboText.contentSize.width/2- comboLabel.contentSize.width-30,screenSize.height/2-comboText.contentSize.height/2 + 100)];
+    [comboText setPosition:ccp(screenSize.width/2 +40,screenSize.height/2-comboText.contentSize.height/2 +90)];
     
     [self addChild:scoreLable z:-1];
     [self addChild:lifeLabel z:40];
@@ -941,7 +943,8 @@
     comboScore = 0;
     id actionScale = [CCScaleBy actionWithDuration:0.4 scale:1.5f];
     id actionMove  = [CCMoveTo actionWithDuration:0.4 position:scoreLable.position];
-    id actionFadeOut = [CCFadeOut actionWithDuration:0.8];
+    CCFadeOut *actionFadeOut = [CCFadeOut actionWithDuration:0.8];
+    actionFadeOut.tag = 2;
     id actionSpawn = [CCSpawn actions:actionScale,actionMove,actionFadeOut,nil];
     
 //    CCCallFuncN* callDidAddCombo = [CCCallFuncN actionWithTarget:self selector:@selector(callDidAddCombo:)];
@@ -955,12 +958,13 @@
 {
     isComboMode = YES;
     comboScore +=1;
-   
+    [comboLabel stopAllActions];
     [comboLabel setString:[NSString stringWithFormat:@"%i",comboScore]];
 //    if (!comboText.visible) {
         comboLabel.scale = 1.0f;
         comboLabel.opacity = 255.0f;
-        [comboLabel setPosition:ccp(screenSize.width-comboLabel.contentSize.width-20,screenSize.height/2-comboLabel.contentSize.height/2 + 115)];
+    [comboLabel setPosition:ccp(screenSize.width/2 +comboText.contentSize.width+15,screenSize.height/2-comboLabel.contentSize.height/2 + 115)];
+
         comboText.visible = YES;
         comboLabel.visible = YES;
 //    }
