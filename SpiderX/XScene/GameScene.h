@@ -36,13 +36,19 @@
     CCLabelAtlas *scoreLable;       
     //生命面板
     CCLabelAtlas *lifeLabel;
-    
+    //combo面板
+    CCLabelAtlas *comboLabel;
+
+    CCLabelTTF   *comboText;
     
     //游戏时间
     ccTime _totalTime;
     //剩余生命
     int playerlife;
 
+    //是否进入了COMBO模式
+    BOOL isComboMode;
+    int comboScore;
     
     //背景地图
     CCSprite * m_backSky;
