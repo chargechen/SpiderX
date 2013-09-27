@@ -48,6 +48,18 @@
     [parent addChild:effect z:200];
     return effect;
 }
+-(CCParticleRain*)rain:(CCNode*)parent at:(CGPoint)pos
+{
+    CCParticleRain *effect =[CCParticleRain node];
+    //    effect.startSize=10;
+    //    effect.EmissionRate= 60;
+    effect.life = 4;
+//    [effect setSpeed:200];
+    effect.position =pos;
+    effect.scale =self.scale;
+    [parent addChild:effect z:200];
+    return effect;
+}
 //动画加入缓存
 +(void)sharedExplosion
 {

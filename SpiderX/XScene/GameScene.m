@@ -129,6 +129,10 @@
 {
     [Effect sharedExplosion];
     [SpiderEnemy sharedEnemy];
+    Effect *effect = [Effect create];
+    [effect rain:self at:ccp(screenSize.width/2, screenSize.height)];
+    
+    [CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
 }
 
 //初始化声音监听
@@ -879,9 +883,9 @@
     if (numRocksMoved % 4 == 0 && rockMoveDuration > 2.0f) {
         rockMoveDuration -= 0.1f;
     }
-    
     // TODO 降低难度吧？
-    CGPoint belowScreenPosition = player?player.position:CGPointMake(rock.position.x,
+    CGPoint belowScreenPosition = player?CGPointMake(player.position.x,
+                                                     player.position.y -[rock texture].contentSize.height):CGPointMake(rock.position.x,
                                                                      -[rock texture].contentSize.height);
     //    CGPoint belowScreenPosition = CGPointMake(rock.position.x, -[rock texture].contentSize.height);
     
@@ -918,6 +922,9 @@
 //大招秒全场
 -(void)destroyAllRocks
 {
+    CCParticleSystem *emitter_=[CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
+    [self addChild:emitter_ z:10];
+
     for(int i =0,len=[rocks count];i<len;i++)
     {
         XRock *curRock =[rocks objectAtIndex:i];
@@ -925,12 +932,22 @@
         {
             continue;
         }
-        CCParticleSystem *emitter_=[CCParticleSystemQuad particleWithFile:@"ExplodingRing.plist"];
-        [self addChild:emitter_ z:10];
                 
-        Effect *effect = [Effect create];
-        [effect explode:self at:curRock.position];
+//        Effect *effect = [Effect create];
+//        [effect explode:self at:curRock.position];
         [self removeRock:curRock];
+    }
+    for(int i =0,len=[enemy_items count];i<len;i++)
+    {
+        SpiderEnemy *curEnemy =[enemy_items objectAtIndex:i];
+    if ([curEnemy numberOfRunningActions] == 0)
+    {
+        continue;
+    }
+    
+    //        Effect *effect = [Effect create];
+    //        [effect explode:self at:curRock.position];
+        [curEnemy destroy];
     }
 }
 
@@ -948,7 +965,7 @@
     id actionSpawn = [CCSpawn actions:actionScale,actionMove,actionFadeOut,nil];
     
 //    CCCallFuncN* callDidAddCombo = [CCCallFuncN actionWithTarget:self selector:@selector(callDidAddCombo:)];
-    CCCallFuncND* callDidAddCombos = [CCCallFuncND actionWithTarget:self selector:@selector(callDidAddCombos::) data:(void*)tmpComboScore];
+    CCCallFuncND* callDidAddCombos = [CCCallFuncND actionWithTarget:self selector:@selector(callDidAddCombos:with:) data:(void*)tmpComboScore];
     CCSequence* sequence = [CCSequence actions:actionSpawn, callDidAddCombos, nil];
     [comboLabel runAction:sequence];
     
@@ -959,11 +976,11 @@
     isComboMode = YES;
     comboScore +=1;
     [comboLabel stopAllActions];
-    [comboLabel setString:[NSString stringWithFormat:@"%i",comboScore]];
+    [comboLabel setString:[NSString stringWithFormat:@"+ %i",comboScore]];
 //    if (!comboText.visible) {
         comboLabel.scale = 1.0f;
         comboLabel.opacity = 255.0f;
-    [comboLabel setPosition:ccp(screenSize.width/2 +comboText.contentSize.width+15,screenSize.height/2-comboLabel.contentSize.height/2 + 115)];
+    [comboLabel setPosition:ccp(screenSize.width/2 +comboText.contentSize.width+15,screenSize.height/2-comboLabel.contentSize.height/2 + 93)];
 
         comboText.visible = YES;
         comboLabel.visible = YES;
@@ -972,7 +989,7 @@
     [self performSelector:@selector(exitComboMode) withObject:nil afterDelay:2];
 }
 
--(void)callDidAddCombos:(CCNode *)target:(void*) data
+-(void)callDidAddCombos:(CCNode *)target with:(void*) data
 {
     [Config sharedConfig].scoreValue += (int)data;
 }

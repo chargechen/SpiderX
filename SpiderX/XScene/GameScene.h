@@ -65,6 +65,9 @@
     SneakyButton* fireButton;
 	SneakyJoystick* joystick;
     ccTime nextShotTime;
+    
+    //大招效果
+    CCParticleSystem *_emitter;
 }
 //声音监听器
 @property (nonatomic,strong) SCListener *listener;
